@@ -2,18 +2,14 @@
 
 int main(void)
 {
-    char array[3][10];
-    int i;
-    char* ary;
-    ary = array;
+    int num = 10;
+    int * ptr1 = &num;
+    int * ptr2 = ptr1;
+    (*ptr1)++;
+    (*ptr2)++;
+    printf("%d", num);
 
-    for (i = 0; i < 3; i++);
-    {
-        scanf_s("%s", ary[i]);
-    }
-    for (i = 0; i < 3; i++);
-    {
-        printf("%s", ary[i]);
-    }
+
+    
     return 0;
 }

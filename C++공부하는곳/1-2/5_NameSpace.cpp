@@ -38,4 +38,6 @@ void ProgComImpl::simpleFunc(void)
 {
     std::cout<<"ProgCom이 정의 한 함수"<<std::endl;
 
-}
+} 
+
+//name space를 일종의 객체로 봐도 되는가??

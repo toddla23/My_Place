@@ -11,6 +11,7 @@ struct Car
     ACC_STEP    = 10,
     BEK_STEP    = 10
     };
+    
     char gameID[ID_LEN];
     int fuelGauge;
     int curSpeed;

@@ -2,6 +2,8 @@
 
 int main(void)
 {
-    int num1 = 100;
+    float num1 = 66 + (13.7 * 52) + (5 * 169) - (6.8 * 21);
+    printf("%f",num1);
+    return 0;
     
 }

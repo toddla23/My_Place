@@ -2,8 +2,11 @@
 
 int main(void)
 {
-    float num1 = 66 + (13.7 * 52) + (5 * 169) - (6.8 * 21);
-    printf("%f",num1);
-    return 0;
-    
+    int num1 = 10;
+    int * ptr = &num1;
+
+    double num2 = 3.15;
+    double *ptr2 = &num2;
+
+    printf("%d", *ptr);
 }

@@ -5,7 +5,7 @@ int main(void)
     int arr[10];
     int num = 0;
     int *ptr1 = arr;
-    int *ptr2 = arr + 10;
+    int *ptr2 = arr + 9;
     
     for(int i = 0; i < 10; i++)
     {
@@ -24,8 +24,8 @@ int main(void)
         }
 
         printf("Ãâ·Â :");
-        for(int i = 0; i <10; i++)
-            printf(" %d",arr[i]);
+        for(int j = 0; j <10; j++)
+            printf(" %d",arr[j]);
     }  
 
 

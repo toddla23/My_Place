@@ -2,5 +2,6 @@
 
 int main(void)
 {
-    printf("Hello World!\n");
+    int L = 3/2;
+    printf("%d", L);
 }

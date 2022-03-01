@@ -8,30 +8,59 @@ int main(void)
     
     while(true)
     {
-        if (L%2 == 1 && N%(L/2) == 0) //L이 홀수일떄
+        if (L%2 == 1 && N%L == 0) //L이 홀수일떄
         {
-            printf("홀수 : %d\n", L);
             break;
         }
-        else if (L % 2 == 0 && N%(L/2) == L/2)//L이 짝수일떄
+        else if (L % 2 == 0 && N%L == L/2)//L이 짝수일떄
         {
-            printf("짝수 : %d\n", L);
             break;
         }
 
         L++;
 
-        if (L==N) //답이 없을떄
-        {
-            L = -1;
-            break;
-        }
     }
 
 
-    for(int i = -(L-1)/2 ; i < (L-1)/2 + 1; i++)
+    if (L%2 == 0)
     {
-        printf("%d ", N/L + i);
+        int a = -(N%L-1);
+
+        if(N/L+a < 0)
+        {
+                printf("-1");
+                return 0;
+        }
+        for(int i = 0; i < L; i++)
+        {
+
+
+            printf("%d ",N/L+a);
+            a++;
+            
+            
+        }
+    }
+    else if (L%2 == 1)
+    {
+        int a = -(L/2);
+
+        if(N/L+a < 0)
+        {
+            printf("-1");
+            return 0;
+        }
+
+        for(int i = 0; i < L; i++)
+        {
+            if(N/L+a < 0)
+            {
+                printf("-1");
+                break;
+            }
+            printf("%d ",N/L+a);
+            a++;
+        }
     }
 
     return 0;

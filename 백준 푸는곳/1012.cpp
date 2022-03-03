@@ -27,7 +27,6 @@ int main(void)
         
         scanf("%d %d %d", &M, &N, &K);
 
-
         arr[50][50] = { 0,};
 
         while(K--)
@@ -53,8 +52,6 @@ int main(void)
         printf("%d\n",answer);
 
     }
-
-
 
     return 0;
 }

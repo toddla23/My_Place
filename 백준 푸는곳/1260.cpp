@@ -5,7 +5,7 @@ int roadlst[10000][2];
 int DFS(int N, int M, int V)
 {
     int visit = N+1;
- for(int i = 0; i < M; i++)      //경로탐색중 가장 숫자가 작은거 찾기
+ for(int i = 0; i < M; i++)      
     {
         for(int j = 0; j < 2; j++)
         {
@@ -53,5 +53,5 @@ int main(void)
     int a;
     
 
-
+    return 0;
 }

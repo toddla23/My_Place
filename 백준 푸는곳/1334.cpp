@@ -24,8 +24,8 @@ int main(void)
 
     if(i%2 == 0)
     {
-        left = N/(pow(10,i/2));
-        right = N%(pow(10,i/2))
+        left = N /(pow(10,i/2));
+        right = 
 
     }
 

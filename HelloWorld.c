@@ -2,6 +2,6 @@
 
 int main(void)
 {
-    int L = 3/2;
+    int L = 3 / 10;
     printf("%d", L);
 }

@@ -3,8 +3,17 @@ using namespace std;
 
 int main(void)
 {
-    char a = 'a';
+    int a = 5;
+    double b = 3.14;
 
-    cout << a << endl;
+    int*c = &a;
+    double* d = (double*)c;
+
+    int e = a + b;
+
+    cout << e  << endl;
+    
+
     return 0;
+
 }

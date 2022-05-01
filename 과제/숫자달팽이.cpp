@@ -1,98 +1,87 @@
-#include <iostream>
-#include <time.h>
+#include<iostream>
+
 using namespace std;
 
-void temp(int n, int a, int b) {
-	if (n == 1)
-		cout << '1' << endl;
-	else {
-		clock_t start, end;
-		double result;
+void solve(int n,int a,int b){
+    int cnt=0,now=0;
+	int top = 0, bottom = n-1, left = 0, right = n-1;
+	int X = 0, Y = 0;
 
-		int na = n;
-		int i = 0;
-		int j = 0;
-		int mini = 0;
-		int maxi = n - 1;
-		int minj = 0;
-		int maxj = n - 1;
-		int where = 0;
-
-
-
-		while (na * 4 - 4 < a) {
-			i++;
-			j++;
-			mini++;
-			minj++;
-			maxi--;
-			maxj--;
-			a = a - (na * 4 - 4);
-			b = b - (na * 4 - 4);
-			na -= 2;
-		}
-
-		for (int q = 1; q < b + 1; q++) {
-			if (q >= a && q <= b) {
-				printf("%d ", n * j + i + 1);
-
-			}
-
-			if (where == 0) {
-				if (i < maxi) {
-					i++;
-					if (i == maxi) {
-						minj++;
-						where = 1;
-					}
-				}
-			}
-			else if (where == 1) {
-				if (j < maxj) {
-					j++;
-					if (j == maxj) {
-						maxi--;
-						where = 2;
-					}
-				}
-			}
-			else if (where == 2) {
-				if (i > mini) {
-					i--;
-					if (i == mini) {
-						maxj--;
-						where = 3;
-					}
-				}
-			}
-			else if (where == 3) {
-				if (j > minj) {
-					j--;
-					if (j == minj) {
-						mini++;
-						where = 0;
-					}
-				}
-			}
-
-
-
-
-
-		}
-
-		cout << '\n';
+	if(n == 1)
+	{
+		cout << 1;
 	}
+	else
+	{
+	while(cnt <= b)
+	{
+		while(Y == top && X != right)
+		{
+			if(cnt > b)
+				break;
+			X++;
+			cnt++;
+			if(cnt + 1 >= a && cnt + 1 <= b)
+			{
+				cout << Y * n + X + 1 << "\n ";
+				cout <<cnt<< " \n";
+			}
+		}
+		top++;
 
+		while(X == right && Y != bottom)
+		{
+			if(cnt > b)
+				break;
+			Y++;
+			cnt++;
+			if(cnt + 1 >= a && cnt + 1 <= b)
+			{
+				cout << Y * n + X + 1 << " \n";
+				cout <<cnt<< " \n";
+			}
+		}
+		right--;
+
+		while(Y == bottom && X != left)
+		{
+			if(cnt > b)
+				break;
+			X--;
+			cnt++;
+			if(cnt + 1 >= a && cnt + 1 <= b)
+			{
+				cout << Y * n + X + 1 << " \n";
+				cout <<cnt<< " \n";
+			}		}
+		bottom--;
+
+		while(X == left && Y != top)
+		{
+			if(cnt > b)
+				break;
+			Y--;
+			cnt++;
+			if(cnt + 1 >= a && cnt + 1 <= b)
+			{
+				cout << Y * n + X + 1 << " \n";
+				cout <<cnt<< " \n";
+			}
+
+		}
+		left++;
+	}
+	}
 }
 
-int main()
-{
-	int k, n, b, c;
-	cin >> k;
-	for (int i = 0; i < k; i++) {
-		cin >> n >> b >> c;
-		temp(n, b, c);
-	}
+int main(){
+    int T,N,A,B;
 
+    cin>>T;
+
+    for (int i = 0; i < T; i++){
+        cin>>N>>A>>B;
+        solve(N,A,B);
+        cout<<endl;
+    }
 }

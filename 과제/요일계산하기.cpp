@@ -22,7 +22,6 @@ int main(void)
     for(int i = 0; i < t; i++)
     {
         cin >> Y >> M >> D;
-
         cout << check(Y, M, D) << endl;
     }
 

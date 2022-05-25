@@ -2,12 +2,7 @@
 
 int main(void)
 {
-    int L = 3 / 10;
-
-    int y = 0;
-    int* x = &y;
-
-    *x = 3;
+    long y = -10 / 2;
     
     printf("%d", y);
 }

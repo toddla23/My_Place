@@ -2,10 +2,19 @@
 
 using namespace std;
 
+long gcd(long m, long n)
+{
+    if (m == n)
+        return n;
+    else if (m < n)
+        return gcd(m, n-m);
+    else
+        return gcd(m-n, n);
+}
+
 int main(void)
 {
-    char a = '5';
-    char b = '3';
+ 
 
-    cout << a-b <<endl;
+    cout << gcd(4, 6) <<endl;
 }

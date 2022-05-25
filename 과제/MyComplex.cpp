@@ -1,19 +1,18 @@
 #include "MyComplex.h"
-// Constructor
+using namespace std;
 
+// Constructor
 myComplex::myComplex(int real, int imag)
 {
     realPart = real;
-    imaginaryPart = imag;   
+    imaginaryPart = imag;
 }
-
 // Copy constructor
 myComplex::myComplex(const myComplex& number)
 {
     realPart = number.realPart;
-    imaginaryPart = number.imaginaryPart;   
+    imaginaryPart = number.imaginaryPart;
 }
-
 // Accessor functions
 int myComplex::getRealPart() const
 {
@@ -21,26 +20,22 @@ int myComplex::getRealPart() const
 }
 int myComplex::getImaginaryPart() const
 {
-    return imaginaryPart;
+        return imaginaryPart;
 }
-
 // Mutator functions
 void myComplex::setRealPart(int real)
 {
     realPart = real;
 }
-
 void myComplex::setImaginaryPart(int imag)
 {
     imaginaryPart = imag;
 }
-
 void myComplex::set(int real, int imag)
 {
     realPart = real;
     imaginaryPart = imag;
 }
-
 // Overloaded binary operators
 myComplex myComplex::operator +(const myComplex& number) const
 {
@@ -48,11 +43,28 @@ myComplex myComplex::operator +(const myComplex& number) const
     int newImag = imaginaryPart + number.imaginaryPart;
     return myComplex (newReal, newImag);
 }
-
 myComplex myComplex::operator +(int value) const
 {
     return myComplex(value) + (*this);
 }
+myComplex& myComplex::operator +=(const myComplex& number)
+{
+    realPart += number.realPart;
+    imaginaryPart += number.imaginaryPart;
+    return *this;
+}
+myComplex& myComplex::operator ++()
+{
+    realPart++;
+    return *this;
+}
+myComplex& myComplex::operator ++(int)
+{
+    myComplex t(*this);
+    operator++();
+    return t;
+}
+
 
 myComplex myComplex::operator -(const myComplex& number) const
 {
@@ -60,22 +72,43 @@ myComplex myComplex::operator -(const myComplex& number) const
     int newImag = imaginaryPart - number.imaginaryPart;
     return myComplex (newReal, newImag);
 }
-
 myComplex myComplex::operator -(int value) const
 {
     return myComplex(value) - (*this);
 }
+myComplex& myComplex::operator -=(const myComplex& number)
+{
+    realPart = realPart - number.realPart;
+    imaginaryPart = imaginaryPart - number.imaginaryPart;
+    return *this;
+}
+myComplex& myComplex::operator --()
+{
+    realPart--;
+    return *this;
+}
+myComplex& myComplex::operator --(int)
+{
+    myComplex t(*this);
+    operator--();
+    return t;
+}
 
 myComplex myComplex::operator *(const myComplex& number) const
 {
-    int newReal = realPart * number.realPart - imaginaryPart * number.imaginaryPart;
-    int newImag = imaginaryPart * number.realPart + realPart * number.imaginaryPart;
+    int newReal = (realPart * number.realPart) - (imaginaryPart * number.imaginaryPart);
+    int newImag = (imaginaryPart * number.realPart) + (realPart * number.imaginaryPart);
     return myComplex (newReal, newImag);
 }
-
 myComplex myComplex::operator *(int value) const
 {
     return myComplex(value) * (*this);
+}
+myComplex& myComplex::operator *=(const myComplex& number)
+{
+    realPart = (realPart * number.realPart) - (imaginaryPart * number.imaginaryPart);
+    imaginaryPart = (imaginaryPart * number.realPart) + (realPart * number.imaginaryPart);
+    return *this;
 }
 
 // Assignment operators
@@ -85,67 +118,21 @@ myComplex& myComplex::operator =(const myComplex& number)
     this->imaginaryPart = number.imaginaryPart;
     return *this;
 }
-
-myComplex& myComplex::operator +=(const myComplex& number)
-{
-    *this = number + *this;
-    return *this;
-}
-
-myComplex& myComplex::operator -=(const myComplex& number)
-{
-    *this = number - *this;
-    return *this;
-}
-
-myComplex& myComplex::operator *=(const myComplex& number)
-{
-    *this = number * *this;
-    return *this;
-}
-
-myComplex& myComplex::operator ++()
-{
-    realPart++;
-    return *this;
-}
-
-myComplex& myComplex::operator ++(int)
-{
-    myComplex t(*this);
-    operator++();
-    return t;
-}
-
-myComplex& myComplex::operator --()
-{
-    realPart--;
-    return *this;
-}
-
-myComplex& myComplex::operator --(int)
-{
-    myComplex t(*this);
-    operator--();
-    return t;
-}
-
 myComplex& myComplex::operator =(int value)
 {
     realPart = value;
     imaginaryPart = 0;
     return *this;
 }
-
 // Overloading comparison operators
 bool myComplex::operator ==(const myComplex& number) const
 {
-    return (realPart == number.getRealPart()) && (imaginaryPart == number.getImaginaryPart());
+    return (realPart == number.realPart) && (imaginaryPart == number.imaginaryPart);
 }
 
 bool myComplex::operator !=(const myComplex& number) const
 {
-    return (realPart != number.getRealPart()) || (imaginaryPart != number.getImaginaryPart());
+    return (realPart != number.realPart) || (imaginaryPart != number.imaginaryPart);
 }
 
 bool myComplex::operator >(const myComplex& number) const
@@ -160,9 +147,8 @@ bool myComplex::operator >=(const myComplex& number) const
 
 bool myComplex::operator <(const myComplex& number) const
 {
-    return norm() > number.norm();
+    return norm() < number.norm();
 }
-
 bool myComplex::operator <=(const myComplex& number) const
 {
     return norm() <= number.norm();
@@ -180,7 +166,7 @@ int myComplex::norm() const
     return realPart * realPart + imaginaryPart * imaginaryPart;
 }
 
-ostream &operator <<(ostream& outStream, const myComplex& number)
+ostream &operator <<(ostream &outStream, const myComplex& number)
 {
     outStream << "(" << number.realPart << "," << number.imaginaryPart << ")";
     return outStream;
@@ -188,9 +174,6 @@ ostream &operator <<(ostream& outStream, const myComplex& number)
 
 istream &operator >>(istream &inStream, myComplex& number)
 {
-    int realpart, imaginarypart;
-    inStream >> realpart >> imaginarypart;
-    number.setImaginaryPart(imaginarypart);
-    number.setRealPart(realpart);
+    inStream >> number.realPart >> number.imaginaryPart;
     return inStream;
 }

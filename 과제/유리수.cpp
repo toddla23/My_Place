@@ -394,7 +394,7 @@ void testDataFromFile()
             cin >> a >> b;
             myRational X(a,b); 
             arr[j] = X;
-            cout <<"uploaded "<<endl;
+            //cout <<"uploaded "<<endl;
         }
 
         for(int j = 0 ; j < n-1; j++)

@@ -75,7 +75,7 @@ void testSimpleCase()
     cout << (tmp4 *= 3) << endl;
 }
 
-void testDataFromFile()
+/*void testDataFromFile()
 {
     int numTestCases;
     cin >> numTestCases;
@@ -83,13 +83,13 @@ void testDataFromFile()
     {
         int numTerms, terms[100];
        
-       /* read first polynomial */
+       // read first polynomial
         cin >> numTerms;
         for (int j=0; j<numTerms; j++)
         cin >> terms[2*j] >> terms[2*j+1];
         myPolynomial p1(numTerms, terms);
         
-        /* read second polynomial */
+        // read second polynomial 
         cin >> numTerms;
         for (int j=0; j<numTerms; j++)
             cin >> terms[2*j] >> terms[2*j+1];
@@ -108,4 +108,4 @@ void testDataFromFile()
         p5 *= 2;
         cout << p5 << endl;
     }
-}
+}*/

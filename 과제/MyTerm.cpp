@@ -42,6 +42,11 @@ myTerm myTerm::ddx() const
     return myTerm(exp*coeff, exp-1);
 }
 
+myTerm myTerm::operator *(int n)
+{
+    return myTerm(coeff * n, exp);
+}
+
 // output operator
 ostream& operator <<(ostream &outStream, const myTerm& term)
 {

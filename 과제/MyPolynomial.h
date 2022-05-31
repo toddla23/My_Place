@@ -11,7 +11,8 @@ class myPolynomial
 private:
     int degree; // maximum expnent
     /********************* add your code here ********************************/
-    list<myTerm> term;
+    myTerm term[50];
+    int size;
 
 public:
     myPolynomial(int c = 0, unsigned e = 0);
@@ -30,9 +31,7 @@ public:
     myPolynomial operator *(int k) const;
     myPolynomial operator +(const myPolynomial &poly) const;
     myPolynomial operator -(const myPolynomial &poly) const;
-    
     myPolynomial operator *(const myPolynomial &poly) const;
-    friend myPolynomial operator*(int value, const myPolynomial &poly);
 
     long operator() (int x) const; // evaluate the polynomial
     int getDegree() const; // get a degree of the polynomial

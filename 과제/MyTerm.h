@@ -34,6 +34,7 @@ public:
     
     // member functions
     myTerm ddx() const; // derivative of a term
+    myTerm operator *(int n);
     
     // friend functions and classes
     friend ostream& operator <<(ostream &outStream, const myTerm& term);

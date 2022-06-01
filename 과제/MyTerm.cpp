@@ -42,7 +42,7 @@ myTerm myTerm::ddx() const
     return myTerm(exp*coeff, exp-1);
 }
 
-myTerm myTerm::operator *(int n)
+myTerm myTerm::operator * (int n)
 {
     return myTerm(coeff * n, exp);
 }

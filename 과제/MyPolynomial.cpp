@@ -215,9 +215,11 @@ myPolynomial myPolynomial::operator *(const myPolynomial &poly) const
 
 }
 
+/*
 long operator() (int x) const; // evaluate the polynomial
 int getDegree() const; // get a degree of the polynomial
 unsigned getNumTerms() const; // number of terms in the polynomial
+*/
 
 myPolynomial myPolynomial::ddx() const // derivative of a polynomial
 {

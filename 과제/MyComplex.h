@@ -6,7 +6,7 @@ using namespace std;
 class myComplex {
 public:
      // Constructor (생성자)
-     myComplex(int real = 0, int imag = 0);
+    myComplex(int real = 0, int imag = 0);
 
     // Copy constructor (복사 생성자)
     myComplex(const myComplex& number);
@@ -59,8 +59,8 @@ public:
     friend istream& operator>>(istream &inStream, myComplex& number);
 
     private:
-    int realPart;
-    int imaginaryPart;
-    int norm() const;
+        int realPart;
+        int imaginaryPart;
+        int norm() const;
 };
 #endif

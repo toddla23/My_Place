@@ -2,7 +2,8 @@
 
 int main(void)
 {
-    long y = -10 / 2;
-    
-    printf("%d", y);
+    int a = 10;
+    int *p = &a;
+
+    printf("%d", *p);
 }

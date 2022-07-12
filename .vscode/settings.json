@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 "terminal.integrated.profiles.windows": {
     "GitBash": {
         "path": ["C:\\Git\\bin\\bash.exe"],
@@ -52,4 +53,11 @@
         "typeinfo": "cpp",
         "list": "cpp"
     }
+=======
+  "files.associations": {
+    "ostream": "cpp",
+    "cmath": "cpp",
+    "vector": "cpp"
+  }
+>>>>>>> ee4520a631375b1f9e772f3b2986661903ebd0a6
 }

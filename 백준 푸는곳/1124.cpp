@@ -4,7 +4,6 @@
 #define prime_size 100000
 
 using namespace std;
-
 int list[prime_size];
 vector<int> prime;
 

@@ -1,6 +1,6 @@
 #include <stack>
 #include <iostream>
-#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -18,14 +18,48 @@ void initNode(node* n)
     n->hight = 1;
 }
 
-void insertNode(node *root, int key)
+void insertNode(node *T, int newKey)
 {
 
-    stack<int> s;
+    stack<node*> stack;
 
-    node* n = new node;
-    node * p = root;
+    node *n = new node;
+    node *p = T;
+    node *q = NULL;     //p가 선봉대 q가 후발
    
+   while(p != NULL)
+   {
+        if(newKey == p->key)
+            return;
+        
+        q = p;
+        stack.push(q);
+
+        if(newKey < p.key)
+            p = p->left;
+        else
+            p = p->right;
+   }
+
+    node *newNode = new node;
+    newNode->key = newKey;
+
+    if(T == NULL)
+        T = newNode;
+    else if(newKey < q->key)
+        q->left = newNode;
+    else
+        q->right = newNode;
+    
+    while(!stack.empty())
+    {
+        q = stack.top();
+        stack.pop();
+
+        q->hight = 1+ max(q->left->hight, q->right->hight);
+        
+    }
+    
 }
 
 

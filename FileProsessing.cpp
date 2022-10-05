@@ -37,5 +37,3 @@ int main(void)
 
     return 0;
 }
-
-// 데스크탑 to 노트북

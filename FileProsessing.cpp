@@ -1,5 +1,8 @@
-#include <iostream>
 #include <stack>
+#include <iostream>
+#include <vector>
+
+using namespace std;
 
 typedef struct node
 {
@@ -17,19 +20,19 @@ void initNode(node* n)
 
 void insertNode(node *root, int key)
 {
+
     stack<int> s;
+
     node* n = new node;
-
     node * p = root;
-    
-        
-
     
 }
 
 
 int main(void)
 {
+    
+
     node * root = new node;
 
     return 0;

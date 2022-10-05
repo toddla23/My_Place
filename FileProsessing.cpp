@@ -38,4 +38,4 @@ int main(void)
     return 0;
 }
 
-//깃헙 테스트~
+// 데스크탑 to 노트북

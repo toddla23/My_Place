@@ -25,7 +25,7 @@ void insertNode(node *root, int key)
 
     node* n = new node;
     node * p = root;
-    
+   
 }
 
 
@@ -37,3 +37,5 @@ int main(void)
 
     return 0;
 }
+
+//깃헙 테스트~

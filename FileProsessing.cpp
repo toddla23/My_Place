@@ -40,7 +40,7 @@ node* insertBST(node *T, int newKey)
     {
         if(newKey == p->key)
         {
-            cout << "i <" << newKey <<"> : The key alreadt exists" << endl;
+            cout << "i <" << newKey <<"> : The key already exists" << endl;
             return T;
         }
         q = p;
@@ -103,9 +103,10 @@ node* deleteBST(node *T, int deleteKey)
 
     if(p == NULL)
     {
-        cout << "d <" << deleteKey << "> : The key does not exist";
+        cout << "d <" << deleteKey << "> : The key does not exist" << endl;
         return T;
     }
+
     if(p->left != NULL && p->right != NULL)
     {
         stack.push(p);
@@ -123,6 +124,41 @@ node* deleteBST(node *T, int deleteKey)
         }
         else
         {
+            p = p->left;
+
+            while (p->right != NULL)
+            {
+                stack.push(p);
+                p = p->right;
+            }   
+        }
+
+        tempNode->key = p->key;
+        q = stack.top();
+    }
+
+    if(p->left == NULL && p->right == NULL)
+    {
+        if(q == NULL)
+            T = NULL;
+        else if(q->left == p)
+            q->left = NULL;
+        else
+            q->right = NULL;
+    }
+    else
+    {
+        if(p->left != NULL)
+        {
+            if(q == NULL)
+                T = T->left;
+            else if (q->left == p)
+                q->left = p->left;
+            else
+                q->right = p->left;
+        }
+        else
+        {
             if(q == NULL)
                 T = T->right;
             else if(q->left == p)
@@ -131,13 +167,21 @@ node* deleteBST(node *T, int deleteKey)
                 q->right = p->right;
         }
     }
-    
+
     delete p;
 
     while(!stack.empty())
     {
         q = stack.top();
-        q->height = 1 + max(q->left->height, q->right->height);
+        stack.pop();
+
+        if(q->left == NULL && q->right != NULL)
+            q->height = 1 + q->right->height;
+        else if (q->left != NULL && q->right == NULL)
+            q->height = 1 + q->left->height;
+        else
+            q->height = 1 + max(q->left->height, q->right->height);
+        
     }
 
     inorder(T);

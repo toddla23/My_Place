@@ -6,8 +6,8 @@ using namespace std;
 
 typedef struct node
 {
-    int key, hight;
-    node* right, *left;
+    int key, height;
+    struct node *right, *left;
 
 }node;
 
@@ -15,33 +15,46 @@ void initNode(node* n)
 {
     n->right = NULL;
     n->left = NULL;
-    n->hight = 1;
+    n->height = 0;
 }
 
-void insertNode(node *T, int newKey)
+void inorder(node* T)
 {
+    if(T != NULL)
+    {
+        inorder(T->left);
+        cout << T->key << " ";
+        inorder(T->right);
+    }
+}
 
+
+node* insertBST(node *T, int newKey)
+{
     stack<node*> stack;
 
-    node *n = new node;
     node *p = T;
     node *q = NULL;     //p가 선봉대 q가 후발
-   
-   while(p != NULL)
-   {
+
+    while(p != NULL)
+    {
         if(newKey == p->key)
-            return;
-        
+        {
+            cout << "i <" << newKey <<"> : The key alreadt exists" << endl;
+            return T;
+        }
         q = p;
         stack.push(q);
 
-        if(newKey < p.key)
+        if(newKey < p->key)
             p = p->left;
         else
             p = p->right;
-   }
+    }
 
     node *newNode = new node;
+    //newNode->left = newNode->right = NULL;
+    initNode(newNode);
     newNode->key = newKey;
 
     if(T == NULL)
@@ -50,24 +63,107 @@ void insertNode(node *T, int newKey)
         q->left = newNode;
     else
         q->right = newNode;
-    
+
     while(!stack.empty())
     {
         q = stack.top();
         stack.pop();
 
-        q->hight = 1+ max(q->left->hight, q->right->hight);
+        if(q->left == NULL && q->right != NULL)
+            q->height = 1 + q->right->height;
+        else if (q->left != NULL && q->right == NULL)
+            q->height = 1 + q->left->height;
+        else
+            q->height = 1 + max(q->left->height, q->right->height);
         
     }
+
+    inorder(T);
+    cout << endl;
     
+    return T;
 }
 
+node* deleteBST(node *T, int deleteKey)
+{
+    node *p = T;
+    node *q = NULL;
+    stack<node*> stack;
+
+    while(p != NULL && deleteKey != p->key)
+    {
+        q = p;
+        stack.push(q);
+        
+        if(deleteKey < p->key)
+            p = p->left;
+        else
+            p = p->right;
+    }
+
+    if(p == NULL)
+    {
+        cout << "d <" << deleteKey << "> : The key does not exist";
+        return T;
+    }
+    if(p->left != NULL && p->right != NULL)
+    {
+        stack.push(p);
+        node *tempNode = p;
+        
+        if(p->left->height <= p->right->height)
+        {
+            p = p->right;
+
+            while(p->left != NULL)
+            {
+                stack.push(p);
+                p = p->left;
+            }
+        }
+        else
+        {
+            if(q == NULL)
+                T = T->right;
+            else if(q->left == p)
+                q->left = p->right;
+            else
+                q->right = p->right;
+        }
+    }
+    
+    delete p;
+
+    while(!stack.empty())
+    {
+        q = stack.top();
+        q->height = 1 + max(q->left->height, q->right->height);
+    }
+
+    inorder(T);
+    cout << endl;
+
+    return T;
+}
 
 int main(void)
 {
-    
+    node * T = NULL;
+    char a;
+    int n;
 
-    node * root = new node;
+    while(a != 'q')
+    {
+        cin >> a >> n;
+        if(a == 'i')
+            T = insertBST(T, n);
+        else if(a == 'd')
+            T = deleteBST(T, n);
+        else
+            cout << "Wrong input" << endl;
+    }
 
+    //asdasdasd
     return 0;
 }
+

@@ -81,6 +81,7 @@ node* insertBST(node *T, int newKey)
             q->height = 1 + max(q->left->height, q->right->height);
         
     }
+    cout << endl;
 
     inorder(T);
     cout << endl;
@@ -190,6 +191,7 @@ node* deleteBST(node *T, int deleteKey)
         else
             q->height = 1 + max(q->left->height, q->right->height);
     }
+    cout << endl;
 
     inorder(T);
     cout << endl;
@@ -212,7 +214,9 @@ int main(void)
             T = deleteBST(T, n);
         else
             cout << "Wrong input" << endl;
-        cout << T->key << ", " << T->height <<endl;
+
+        if(T == NULL)
+            break;
     }
 
     return 0;

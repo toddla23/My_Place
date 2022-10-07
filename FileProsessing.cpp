@@ -23,7 +23,7 @@ void inorder(node* T)
     if(T != NULL)
     {
         inorder(T->left);
-        cout << T->key << " ";
+        cout << "["<< T->key << ", " <<T->height << "]";
         inorder(T->right);
     }
 }
@@ -51,6 +51,7 @@ node* insertBST(node *T, int newKey)
         else
             p = p->right;
     }
+    
 
     node *newNode = new node;
     //newNode->left = newNode->right = NULL;
@@ -66,8 +67,11 @@ node* insertBST(node *T, int newKey)
 
     while(!stack.empty())
     {
+        
         q = stack.top();
         stack.pop();
+
+        cout << q->key << ", ";
 
         if(q->left == NULL && q->right != NULL)
             q->height = 1 + q->right->height;
@@ -174,14 +178,17 @@ node* deleteBST(node *T, int deleteKey)
     {
         q = stack.top();
         stack.pop();
+        
+        cout << q->key << ", ";
 
         if(q->left == NULL && q->right != NULL)
             q->height = 1 + q->right->height;
         else if (q->left != NULL && q->right == NULL)
             q->height = 1 + q->left->height;
+        else if (q->left == NULL && q->right == NULL)
+            q->height = 0;
         else
             q->height = 1 + max(q->left->height, q->right->height);
-        
     }
 
     inorder(T);
@@ -205,6 +212,7 @@ int main(void)
             T = deleteBST(T, n);
         else
             cout << "Wrong input" << endl;
+        cout << T->key << ", " << T->height <<endl;
     }
 
     return 0;

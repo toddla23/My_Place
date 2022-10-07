@@ -207,7 +207,5 @@ int main(void)
             cout << "Wrong input" << endl;
     }
 
-    //asdasdasd
     return 0;
 }
-

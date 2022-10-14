@@ -4,6 +4,8 @@
 
 using namespace std;
 
+int N = 0;
+
 typedef struct node
 {
     int key, height;
@@ -23,11 +25,17 @@ void inorder(node* T)
     if(T != NULL)
     {
         inorder(T->left);
-        cout << "["<< T->key << ", " <<T->height << "]";
+        cout << T->key << " ";
         inorder(T->right);
     }
 }
 
+node* getNode()
+{
+    node* N = new node;
+    initNode(N);
+    return N;
+}
 
 node* insertBST(node *T, int newKey)
 {
@@ -40,7 +48,9 @@ node* insertBST(node *T, int newKey)
     {
         if(newKey == p->key)
         {
-            cout << "i <" << newKey <<"> : The key already exists" << endl;
+            cout << "i " << newKey <<" : The key already exists" << endl;
+            inorder(T);
+            cout << endl;
             return T;
         }
         q = p;
@@ -53,9 +63,7 @@ node* insertBST(node *T, int newKey)
     }
     
 
-    node *newNode = new node;
-    //newNode->left = newNode->right = NULL;
-    initNode(newNode);
+    node *newNode = getNode();
     newNode->key = newKey;
 
     if(T == NULL)
@@ -71,8 +79,6 @@ node* insertBST(node *T, int newKey)
         q = stack.top();
         stack.pop();
 
-        cout << q->key << ", ";
-
         if(q->left == NULL && q->right != NULL)
             q->height = 1 + q->right->height;
         else if (q->left != NULL && q->right == NULL)
@@ -81,12 +87,59 @@ node* insertBST(node *T, int newKey)
             q->height = 1 + max(q->left->height, q->right->height);
         
     }
-    cout << endl;
-
     inorder(T);
     cout << endl;
     
     return T;
+}
+
+
+int height(node *T)
+{
+    return T->height + 1;
+}
+
+
+node* maxNode(node *T)
+{
+    node* p = T;
+    node* q = NULL;
+    while(p != NULL)
+    {
+        q = p;
+        p = p->right;
+    }
+    return q;
+}
+
+node* minNode(node *T)
+{
+    node* p = T;
+    node* q = NULL;
+    while(p != NULL)
+    {
+        q = p;
+        p = p->left;
+    }
+    return q;
+}
+void preorder(node* T)
+{
+    if(T != NULL)
+    {
+        preorder(T->left);
+        N++;
+        preorder(T->right);
+    }
+}
+
+int noNodes(node* T)
+{
+    int n;
+    preorder(T);
+    n = N;
+    N = 0;
+    return n;
 }
 
 node* deleteBST(node *T, int deleteKey)
@@ -108,7 +161,10 @@ node* deleteBST(node *T, int deleteKey)
 
     if(p == NULL)
     {
-        cout << "d <" << deleteKey << "> : The key does not exist" << endl;
+        cout << "d " << deleteKey << " : The key does not exist" << endl;
+        inorder(T);
+        cout << endl;
+
         return T;
     }
 
@@ -180,8 +236,6 @@ node* deleteBST(node *T, int deleteKey)
         q = stack.top();
         stack.pop();
         
-        cout << q->key << ", ";
-
         if(q->left == NULL && q->right != NULL)
             q->height = 1 + q->right->height;
         else if (q->left != NULL && q->right == NULL)
@@ -191,7 +245,6 @@ node* deleteBST(node *T, int deleteKey)
         else
             q->height = 1 + max(q->left->height, q->right->height);
     }
-    cout << endl;
 
     inorder(T);
     cout << endl;
@@ -212,8 +265,6 @@ int main(void)
             T = insertBST(T, n);
         else if(a == 'd')
             T = deleteBST(T, n);
-        else
-            cout << "Wrong input" << endl;
 
         if(T == NULL)
             break;

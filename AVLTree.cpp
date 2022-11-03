@@ -17,7 +17,7 @@ typedef struct node
 
 void checkbalande(node* T, int newKey, string rotateType, node* p, node* q)
 {
-
+    
 }
 
 void rotateTree(node* T, string rotateTypq, node* p, node* q)
@@ -60,6 +60,35 @@ void rotateRR(node * x)
     x->left = temp2;
     x->left->left = temp1;
 }
+
+void rotateLR(node * x)
+{
+    node* temp1 = x->left;
+    node* temp2 = x->right;
+
+    int n = x->key;
+    x->key = x->right->key;
+
+    x->right = x->right->right;
+    temp2->right = temp2->left;
+    x->left = temp2;
+    x->left->left = temp1;
+}
+
+void rotateRL(node * x)
+{
+    node* temp1 = x->left;
+    node* temp2 = x->right;
+
+    int n = x->key;
+    x->key = x->right->key;
+
+    x->right = x->right->right;
+    temp2->right = temp2->left;
+    x->left = temp2;
+    x->left->left = temp1;
+}
+
 
 void insertBST(node *T, int newKey)
 {
@@ -131,6 +160,98 @@ void insertBST(node *T, int newKey)
             rotateRR(x);
 
 }
+
+void deleteAVL(node* T, int deleteKey)
+{
+    node* p = T;
+    node* q = NULL;
+    node* x = NULL;
+    node* f = NULL;
+
+    stack<node*> s;
+    
+    while(p != NULL && deleteKey != p->key)
+    {
+        q = p;
+        s.push(q);
+
+        if(deleteKey < p->key)
+            p = p->left;
+        else
+            p = p->right;
+    }
+
+    if(p == NULL)
+        return;
+    
+    node* tempnode = NULL;
+    if(p->left != NULL && p->right != NULL)
+    {
+        s.push(p);
+        tempnode = p;
+
+        if(p->left->height <= p->right->height)
+        {
+            p = p->right;
+            while(p->left != NULL)
+            {
+                s.push(p);
+                p = p->left;
+
+            }
+        }
+        else
+        {
+            p = p->left;
+            while(p->right != NULL)
+            {
+                s.push(p);
+                p = p->right;
+
+            }
+        }
+        tempnode->key = p->key;
+        q = s.top();
+
+    }
+    //line 108
+
+    if(q->left == NULL && p->right == NULL)
+    {
+        if(q == NULL)
+            T = NULL;
+        else if(q->left == p)
+            q->left = NULL;
+        else
+            q->right = NULL;
+
+    }
+    else
+    {
+        if(p->left != NULL)
+        {
+            if(q == NULL)
+                T = T->left;
+            else if(q->left == p)
+                q->left = p->left;
+            else
+                q->right = p->left;
+        }
+        else
+        {
+            if(q == NULL)
+                T = T->right;
+            else if(q->left == p)
+                q->left = p->right;
+            else
+                q->right = p->right;
+        }
+    }   
+    delete p;
+    
+    // line 130
+}
+
 
 int main(void)
 {

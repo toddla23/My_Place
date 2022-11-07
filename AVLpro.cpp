@@ -70,161 +70,42 @@ node* getAVLNode(int newkey)
 }
 
 // rotate 함수 구해야함
-void rotateLL(node * x)     // 완성
+node* rotateLL(node * parent)     // 완성
 {
-    node* temp1 = x->left;
-    node* temp2 = x->right;
+    node* child = parent->right;
+    parent->right = child->left;
+    child->left = parent;
 
-    x->left = x->left->left;
-    temp1->left = temp1->right;
-    temp1->right = x->right;
-    x->right = temp1;
-
-    int n = x->key;
-    x->key = temp1->key;
-    temp1->key = n;
-    
-    updateNode(x->right);
-    updateNode(x);
+    return child;
 }
 
-void rotateRR(node* x)     // 완성
+node* rotateRR(node* parent)     // 완성
 {
-    node* temp1 = x->left;
-    node* temp2 = x->right;
+    node* child = parent->left;
+    parent->left = child->right;
+    child->right = parent;
 
-    x->right = x->right->right;
-    temp2->right = temp2->left;
-    temp2->left = x->left;
-    x->left = temp2;
-
-    int n = x->key;
-    x->key = temp2->key;
-    temp2->key = n;
-
-    updateNode(x->left);
-    updateNode(x);
+    return child;
 }
 
-void rotateLR(node * x)     //미완
+node* insertAVL(node *node, int key)
 {
-    rotateRR(x->left);
-    rotateLL(x);
-}
 
-void rotateRL(node * x)     //미완
-{
-    rotateLL(x->right);
-    rotateRR(x);
-}
+    if(node == NULL)
+		return(getAVLNode(key));
 
-node* insertAVL(node *T, int newKey)
-{
-    node* p = T;
-    node* q = NULL;
-    node* x = NULL;
-    node* f = NULL;
+	if(key < node->key)
+		node->right = insertAVL(node->right, key);
+	else if(key > node->key)
+		node->left = insertAVL(node->left, key);
+	else 
+		return node;
 
+	if(node->bf > 1 && key < node->left->key)
+		retun 
 
-    stack<node*> s;
+	
 
-    while(p != NULL) // 넣을 자리 찾고 지나온거 전부 스택에 저장
-    {
-        if(newKey == p->key)
-        {
-            cout << "i <" <<newKey << "> : The key alreadt exists" <<endl;
-            inorder(T);
-            cout <<endl;
-            return T;
-        }
-        
-        q = p;
-        s.push(p);
-
-        if(newKey < p->key)
-            p = p->left;
-        else
-            p = p->right;
-    }
-
-    node* y = getAVLNode(newKey); // 새 노드 만들기 bf, height = 0
-
-    if(T == NULL) //넣을 자리에 넣기
-        T = y;
-    else if(newKey < q->key)
-        q->left = y;
-    else
-        q->right = y;
-
-
-    while(!s.empty())    // 넣었느니까 지나온거 업데이트
-    {
-        q = s.top();
-        s.pop();
-        
-        updateNode(q);
-
-        if(1 < q->bf || q->bf < -1)
-        {
-            if(x == NULL)
-            {
-                x = q;
-                cout << x->key << endl;
-    
-                if(!s.empty())
-                    f = s.top();
-
-            }
-        }
-    }
-
-    //inorder(T); cout << endl;
-    
-    if(x == NULL)
-    {
-        cout << "NO ";
-        inorder(T);
-        cout << endl;
-        return T;
-    }
-
-    if(1 < x->bf) //rotate도 뭐 그냥 적당히 하면 가능...
-    {
-        if(x->left->bf < 0)
-        {
-            rotateLR(x);
-            cout << "LR ";
-            inorder(T);
-            cout << endl;
-        }
-
-        else 
-        {
-            rotateLL(x);
-            cout << "LL ";
-            inorder(T);
-            cout << endl;
-        }
-    }
-    else
-    {
-        if(x->right->bf > 0)
-        {
-            rotateRL(x);
-            cout << "RL ";
-            inorder(T);
-            cout << endl;
-        }
-        else
-        {
-            rotateRR(x);
-            cout << "RR ";
-            inorder(T);
-            cout << endl;
-        }
-    }
-
-    return T;
 }
 
 node* deleteAVL(node* T, int deleteKey)

@@ -14,159 +14,11 @@ typedef struct node
     struct node* left, *right;
 }node;
 
-node* insertBST(node* T, int newKey)
-{
-    node* p = T;
-    node* q = NULL;
-    
-    while(p != NULL) // 넣을 자리 찾고 지나온거 전부 스택에 저장
-    {
-        if(newKey == p->key)
-        {
-            cout << "i <" <<newKey << "> : The key alreadt exists" <<endl;
-            inorder(T);
-            cout <<endl;
-            return T;
-        }
-        
-        q = p;
+node* Gp;
+node* Gq;
 
-        if(newKey < p->key)
-            p = p->left;
-        else
-            p = p->right;
-    }
+void updateNode(node * q);
 
-    node* y = getAVLNode(newKey); // 새 노드 만들기 bf, height = 0
-
-    if(T == NULL) //넣을 자리에 넣기
-        T = y;
-    else if(newKey < q->key)
-        q->left = y;
-    else
-        q->right = y;
-}
-
-
-void checkbalande(node* T, int newKey, string &rotateType, node* &p, node* &q)
-{
-    p = T;
-
-    node* x = NULL;
-    node* f = NULL;
-
-
-    stack<node*> s;
-
-    while(p != NULL) // 넣을 자리 찾고 지나온거 전부 스택에 저장
-    {   
-        q = p;
-        s.push(p);
-
-        if(newKey < p->key)
-            p = p->left;
-        else
-            p = p->right;
-    }
-
-    while(!s.empty())    // 넣었느니까 지나온거 업데이트
-    {
-        q = s.top();
-        s.pop();
-        
-        updateNode(q);
-
-        if(1 < q->bf || q->bf < -1)
-        {
-            if(x == NULL)
-            {
-                x = q;    
-                if(!s.empty())
-                    f = s.top();
-                    break;
-
-            }
-        }
-    }
-
-    if(x != NULL)
-    {
-        p = x;
-        q = f;
-    }
-
-    if(x == NULL)
-    {
-        rotateType = "NO";
-    }
-
-    if(1 < x->bf)
-    {
-        if(x->left->bf < 0)
-            rotateType = "LR";
-
-        else
-            rotateType = "LL";
-    }
-    else
-    {
-        if(x->right->bf > 0)
-            rotateType = "RL";
-        else
-            rotateType = "RR";
-    }
-}
-
-void rotateTree(node* T, string rotateType, node* p, node* q)
-{
-    if(q->left == p)
-    {
-        if(rotateType == "Ll")
-            q->left = rotateLL(p);
-        else if(rotateType == "RR")
-            q->left = rotateLL(p);
-        else if(rotateType == "LR")
-            q->left = rotateLR(p);
-        else
-            q->left = rotateRL(p);
-    }
-    else
-    {
-        if(rotateType == "Ll")
-            q->right = rotateLL(p);
-        else if(rotateType == "RR")
-            q->right = rotateLL(p);
-        else if(rotateType == "LR")
-            q->right = rotateLR(p);
-        else
-            q->right = rotateRL(p);
-    }
-
-}
-
-void updateNode(node * q)
-{
-    if(q->left == NULL && q->right != NULL)// bf, height 업데이트
-    {
-        q->height = 1 + q->right->height;
-        q->bf = -(q->right->height + 1);   // 왼쪽이 NULL 이니까 오른쪽 높이 +1가 bf
-    }
-    else if (q->left != NULL && q->right == NULL)
-    {
-        q->height = 1 + q->left->height;
-        q->bf = q->left->height + 1;      //오른쪽이 NULL 이니까 왼쪽높이 + 1이 bf
-    }
-    else if(q->left == NULL && q->right == NULL)
-    {
-        q->height = 0;
-        q->bf = 0;
-    }
-    else
-    {
-        q->height = 1 + max(q->left->height, q->right->height);
-       q->bf = q->left->height - q->right->height; //이건뭐...
-    }
-}
 
 void inorder(node* T)
 {
@@ -190,20 +42,28 @@ node* getAVLNode(int newkey)
 }
 
 // rotate 함수 구해야함
-node* rotateRR(node* parent)
+node* rotateLL(node* parent)
 {
     node * child = parent->left;
     parent->left = child->right;
     child->right = parent;
 
+    updateNode(child->left);
+    updateNode(child->right);
+    updateNode(child);
+
     return child;
 }
 
-node* rotateLL(node* parent)
+node* rotateRR(node* parent)
 {
     node * child = parent->right;
     parent->right = child->left;
     child->left = parent;
+
+    updateNode(child->left);
+    updateNode(child->right);
+    updateNode(child);
 
     return child;
 }
@@ -211,51 +71,50 @@ node* rotateLL(node* parent)
 node* rotateLR(node * parent)     //미완
 {
     parent->left = rotateRR(parent->left);
-    rotateLL(parent);
+    parent = rotateLL(parent);
     return parent;
 }
 
 node* rotateRL(node * parent)     //미완
 {
     parent->right = rotateLL(parent->right);
-    rotateRR(parent);
+    parent = rotateRR(parent);
     return parent;
 }
 
-node* insertAVL(node *T, int newKey)
-{
-    string rotateType;
-    node* p = NULL;
-    node* q = NULL;
-
-    insertBST(T, newKey);
-    
-    while(rotateType != "NO")
-    {
-        checkbalande(T, newKey, rotateType, p, q);
-        rotateTree(T, rotateType, p, q);
-    }
-
+void updateNode(node * q)
+{   
     if(q == NULL)
-        return p;
+        return;
+
+    if(q->left == NULL && q->right != NULL)// bf, height 업데이트
+    {
+        q->height = 1 + q->right->height;
+        q->bf = -(q->right->height + 1);   // 왼쪽이 NULL 이니까 오른쪽 높이 +1가 bf
+    }
+    else if (q->left != NULL && q->right == NULL)
+    {
+        q->height = 1 + q->left->height;
+        q->bf = q->left->height + 1;      //오른쪽이 NULL 이니까 왼쪽높이 + 1이 bf
+    }
+    else if(q->left == NULL && q->right == NULL)
+    {
+        q->height = 0;
+        q->bf = 0;
+    }
     else
-        return T;
+    {
+        q->height = 1 + max(q->left->height, q->right->height);
+       q->bf = q->left->height - q->right->height; //이건뭐...
+    }
+}
 
-
-
-
-
-
-    /*
+node* insertBST(node* T, int newKey)
+{
     node* p = T;
     node* q = NULL;
-    node* x = NULL;
-    node* f = NULL;
-
-
-    stack<node*> s;
-
-    while(p != NULL) // 넣을 자리 찾고 지나온거 전부 스택에 저장
+    
+    while(p != NULL) // 넣을 자리 찾고 넣음
     {
         if(newKey == p->key)
         {
@@ -266,7 +125,6 @@ node* insertAVL(node *T, int newKey)
         }
         
         q = p;
-        s.push(p);
 
         if(newKey < p->key)
             p = p->left;
@@ -274,84 +132,164 @@ node* insertAVL(node *T, int newKey)
             p = p->right;
     }
 
-    node* y = getAVLNode(newKey); // 새 노드 만들기 bf, height = 0
+    node* Gp = getAVLNode(newKey); // 새 노드 만들기 bf, height = 0
 
     if(T == NULL) //넣을 자리에 넣기
-        T = y;
+        T = Gp;
     else if(newKey < q->key)
-        q->left = y;
+        q->left = Gp;
     else
-        q->right = y;
+        q->right = Gp;
 
+    return T;
+}
+
+
+void checkbalande(node* T, int newKey, string &rotateType)
+{
+    Gp = T;
+    
+    node* x = NULL;
+    node* f = NULL;
+
+    stack<node*> s;
+
+    while(Gp->key != newKey) // 넣을 자리 찾고 지나온거 전부 스택에 저장
+    {   
+        Gq = Gp;
+        s.push(Gp);
+
+        if(newKey < Gp->key)
+            Gp = Gp->left;
+        else
+            Gp = Gp->right;
+    }
 
     while(!s.empty())    // 넣었느니까 지나온거 업데이트
     {
-        q = s.top();
+        Gq = s.top();
         s.pop();
-        
-        updateNode(q);
+        updateNode(Gq);
 
-        if(1 < q->bf || q->bf < -1)
+        if(1 < Gq->bf || Gq->bf < -1)
         {
             if(x == NULL)
             {
-                x = q;
-                cout << x->key << endl;
-    
+                x = Gq;    
                 if(!s.empty())
                     f = s.top();
+
+                break;
 
             }
         }
     }
 
-    //inorder(T); cout << endl;
-    
     if(x == NULL)
     {
-        cout << "NO ";
-        inorder(T);
-        cout << endl;
-        return T;
+        rotateType = "NO";
+        Gp = NULL;
+        Gq = NULL;
+        return;
     }
 
-    if(1 < x->bf) //rotate도 뭐 그냥 적당히 하면 가능...
+    if(x != NULL)
+    {
+        Gp = x;
+        Gq = f;
+    }
+    if(1 < x->bf)
     {
         if(x->left->bf < 0)
-        {
-            rotateLR(x);
-            cout << "LR ";
-            inorder(T);
-            cout << endl;
-        }
+            rotateType = "LR";
 
-        else 
-        {
-            rotateLL(x);
-            cout << "LL ";
-            inorder(T);
-            cout << endl;
-        }
+        else
+            rotateType = "LL";
     }
     else
     {
         if(x->right->bf > 0)
+            rotateType = "RL";
+        else
+            rotateType = "RR";
+    }
+
+}
+
+void rotateTree(node* T, string rotateType, node* p, node* q)
+{                    
+
+    if(rotateType != "NO")
+    {
+
+        if(q == NULL)
         {
-            rotateRL(x);
-            cout << "RL ";
-            inorder(T);
-            cout << endl;
+            if(rotateType == "LL")
+                Gp = rotateLL(p);
+            else if(rotateType == "RR")
+                Gp = rotateRR(p);
+            else if(rotateType == "LR")
+                Gp = rotateLR(p);
+            else
+                Gp = rotateRL(p);
+            
         }
         else
         {
-            rotateRR(x);
-            cout << "RR ";
-            inorder(T);
-            cout << endl;
+            if(q->left == p)
+            {
+                if(rotateType == "LL")
+                    q->left = rotateLL(p);
+                else if(rotateType == "RR")
+                    q->left = rotateRR(p);
+                else if(rotateType == "LR")
+                    q->left = rotateLR(p);
+                else
+                    q->left = rotateRL(p);
+            }
+            else
+            {
+                if(rotateType == "LL")
+                    q->right = rotateLL(p);
+                else if(rotateType == "RR")
+                    q->right = rotateRR(p);
+                else if(rotateType == "LR")
+                    q->right = rotateLR(p);
+                else
+                    q->right = rotateRL(p);
+            }
+            
+            node* tmp = T;
+            while(tmp->key != q->key) // root 부터 rotate 한 친구까지 update
+            {   
+                updateNode(tmp);
+
+                if(tmp->key < Gp->key)
+                    tmp = tmp->left;
+                else
+                    tmp = tmp->right;
+            }
         }
     }
-        */
-    return T;
+}
+
+node* insertAVL(node *T, int newKey)
+{
+    string rotateType;
+
+    T = insertBST(T, newKey);
+
+    checkbalande(T, newKey, rotateType);
+    cout << rotateType << " ";
+
+    rotateTree(T, rotateType, Gp, Gq);
+
+
+    if(Gq != NULL || rotateType == "NO")
+        return T;
+    else
+        return Gp;
+
 }
 
 node* deleteAVL(node* T, int deleteKey)
@@ -502,6 +440,9 @@ int main(void)
             root = deleteAVL(root, n);
         else
             break;
+        
+        inorder(root);
+        cout <<endl;
 
     } while(root != NULL);
 

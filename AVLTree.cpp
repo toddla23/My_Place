@@ -1,10 +1,11 @@
 #include <iostream>
-#include <vector>
 #include <string>
 #include <stack>
 #include <algorithm>
+#include <fstream>
 
 using namespace std;
+
 
 typedef struct node
 {
@@ -27,6 +28,16 @@ void inorder(node* T)
         inorder(T->left);
         cout <<"("<< T->key << ", " << T->bf << ", " << T->height<< ")" ;
         inorder(T->right);
+    }
+}
+
+void inorder1(node* T)
+{
+    if(T != NULL)
+    {
+        inorder1(T->left);
+        cout <<"("<< T->key << ", " << T->bf<< ") ";
+        inorder1(T->right);
     }
 }
 
@@ -118,8 +129,8 @@ node* insertBST(node* T, int newKey)
     {
         if(newKey == p->key)
         {
-            cout << "i <" <<newKey << "> : The key alreadt exists" <<endl;
-            inorder(T);
+            cout << "i <" <<newKey << "> : The key already exists" <<endl;
+            inorder1(T);
             cout <<endl;
             return T;
         }
@@ -144,8 +155,101 @@ node* insertBST(node* T, int newKey)
     return T;
 }
 
+node* deleteBST(node *T, int deleteKey)
+{
+    node *p = T;
+    node *q = NULL;
+    stack<node*> stack;
 
-void checkbalande(node* T, int newKey, string &rotateType)
+    while(p != NULL && deleteKey != p->key)
+    {
+        q = p;
+        stack.push(q);
+        
+        if(deleteKey < p->key)
+            p = p->left;
+        else
+            p = p->right;
+    }
+
+    if(p == NULL)
+    {
+        cout << "d " << deleteKey << " : The key does not exist" << endl;
+        inorder1(T);
+        cout << endl;
+
+        return T;
+    }
+
+    if(p->left != NULL && p->right != NULL)
+    {
+        stack.push(p);
+        node *tempNode = p;
+        
+        if(p->left->height <= p->right->height)
+        {
+            p = p->right;
+
+            while(p->left != NULL)
+            {
+                stack.push(p);
+                p = p->left;
+            }
+        }
+        else
+        {
+            p = p->left;
+
+            while (p->right != NULL)
+            {
+                stack.push(p);
+                p = p->right;
+            }   
+        }
+
+        tempNode->key = p->key;
+        q = stack.top();
+    }
+
+    if(p->left == NULL && p->right == NULL)
+    {
+        if(q == NULL)
+            T = NULL;
+        else if(q->left == p)
+            q->left = NULL;
+        else
+            q->right = NULL;
+    }
+    else
+    {
+        if(p->left != NULL)
+        {
+            if(q == NULL)
+                T = T->left;
+            else if (q->left == p)
+                q->left = p->left;
+            else
+                q->right = p->left;
+        }
+        else
+        {
+            if(q == NULL)
+                T = T->right;
+            else if(q->left == p)
+                q->left = p->right;
+            else
+                q->right = p->right;
+        }
+    }
+    delete p;
+
+    Gq = q;
+
+    return T;
+}
+
+
+void checkbalande(node* T, int Key, string &rotateType)
 {
     Gp = T;
     
@@ -154,12 +258,12 @@ void checkbalande(node* T, int newKey, string &rotateType)
 
     stack<node*> s;
 
-    while(Gp->key != newKey) // 넣을 자리 찾고 지나온거 전부 스택에 저장
+    while(Gp->key != Key) // 넣을 자리 찾고 지나온거 전부 스택에 저장
     {   
         Gq = Gp;
         s.push(Gp);
 
-        if(newKey < Gp->key)
+        if(Key < Gp->key)
             Gp = Gp->left;
         else
             Gp = Gp->right;
@@ -213,6 +317,7 @@ void checkbalande(node* T, int newKey, string &rotateType)
         else
             rotateType = "RR";
     }
+    
 
 }
 
@@ -294,144 +399,56 @@ node* insertAVL(node *T, int newKey)
 
 node* deleteAVL(node* T, int deleteKey)
 {
-    node* p = T;
-    node* q = NULL;
-    node* x = NULL;
-    node* f = NULL;
+    string rotateType;
 
-    stack<node*> s;
+    T = deleteBST(T, deleteKey);
+    cout <<Gq->key;
+    checkbalande(T, Gq->key, rotateType);
+    cout << rotateType << " ";
+
+
+    inorder1(T);
+    cout <<endl;
+
+    rotateTree(T, rotateType, Gp, Gq);
+
+    inorder1(T);
+    cout <<endl;
+
+    if(Gq != NULL || rotateType == "NO")
+        return T;
+    else
+        return Gp;
     
-    while(p != NULL && deleteKey != p->key)
-    {
-        q = p;
-        s.push(q);
-
-        if(deleteKey < p->key)
-            p = p->left;
-        else
-            p = p->right;
-    }
-
-    if(p == NULL)
-    {
-        cout << "d <" << deleteKey << "> : The key does not exist";
-        return T;
-    }
-    node* tempnode = NULL;
-    if(p->left != NULL && p->right != NULL)
-    {
-        s.push(p);
-        tempnode = p;
-
-        if(p->left->height <= p->right->height)
-        {
-            p = p->right;
-            while(p->left != NULL)
-            {
-                s.push(p);
-                p = p->left;
-
-            }
-        }
-        else
-        {
-            p = p->left;
-            while(p->right != NULL)
-            {
-                s.push(p);
-                p = p->right;
-
-            }
-        }
-        tempnode->key = p->key;
-        q = s.top();
-
-    }
-
-    if(q->left == NULL && p->right == NULL)
-    {
-        if(q == NULL)
-            T = NULL;
-        else if(q->left == p)
-            q->left = NULL;
-        else
-            q->right = NULL;
-
-    }
-    else
-    {
-        if(p->left != NULL)
-        {
-            if(q == NULL)
-                T = T->left;
-            else if(q->left == p)
-                q->left = p->left;
-            else
-                q->right = p->left;
-        }
-        else
-        {
-            if(q == NULL)
-                T = T->right;
-            else if(q->left == p)
-                q->left = p->right;
-            else
-                q->right = p->right;
-        }
-    }   
-    delete p;
-
-    while(!s.empty())
-    {
-        q = s.top();
-        s.pop();
-        q->height = max(q->left->height, q->right->height);
-        q->bf = q->left->height - q->right->height;
-
-        if(1 < q->bf || q->bf < -1)
-        {
-            if(x == NULL)
-            {
-                x = q;
-                f = s.top();
-
-            }
-
-        }
-    }
-
-    if(x == NULL)
-        return T;
-
-    if(1 < x->bf)
-    {
-        if(x->left->bf < 0)
-            rotateLR(x);
-        else
-            rotateLL(x);
-    }
-    else
-    {
-        if(x->right->bf > 0)
-            rotateRL(x);
-        else
-            rotateRR(x);
-    }
-
-    return T;
 
 }
 
 
 int main(void)
 {
+    ifstream ifs("AVL-input.txt");
 
     node* root = NULL;
 
     int n;
     char i;
     
-    do
+    while(!ifs.eof())
+    {
+        ifs >> i >> n ;
+        if(i == 'i')
+            root = insertAVL(root, n);
+        else if(i == 'd')
+            root = deleteAVL(root, n);
+        else
+            break;
+
+        inorder1(root);
+        cout <<endl;
+
+    }
+
+    /*do
     {
         cin >> i >> n ;
         if(i == 'i')
@@ -440,12 +457,12 @@ int main(void)
             root = deleteAVL(root, n);
         else
             break;
-        
-        inorder(root);
+
+        inorder1(root);
         cout <<endl;
 
     } while(root != NULL);
-
+    */
 
     return 0;
 }

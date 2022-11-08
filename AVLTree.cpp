@@ -402,17 +402,17 @@ node* deleteAVL(node* T, int deleteKey)
     string rotateType;
 
     T = deleteBST(T, deleteKey);
-    cout <<Gq->key;
+    cout <<Gq->key;                                     //Gq가 내가 삭제한 노드의 부모노드임...
     checkbalande(T, Gq->key, rotateType);
     cout << rotateType << " ";
 
 
-    inorder1(T);
+    inorder(T);
     cout <<endl;
 
     rotateTree(T, rotateType, Gp, Gq);
 
-    inorder1(T);
+    inorder(T);
     cout <<endl;
 
     if(Gq != NULL || rotateType == "NO")
@@ -433,6 +433,7 @@ int main(void)
     int n;
     char i;
     
+    /*
     while(!ifs.eof())
     {
         ifs >> i >> n ;
@@ -447,8 +448,9 @@ int main(void)
         cout <<endl;
 
     }
+    */
 
-    /*do
+    do
     {
         cin >> i >> n ;
         if(i == 'i')
@@ -462,7 +464,7 @@ int main(void)
         cout <<endl;
 
     } while(root != NULL);
-    */
+    
 
     return 0;
 }

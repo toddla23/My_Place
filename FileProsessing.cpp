@@ -93,55 +93,6 @@ node* insertBST(node *T, int newKey)
     return T;
 }
 
-
-int height(node *T)
-{
-    return T->height + 1;
-}
-
-
-node* maxNode(node *T)
-{
-    node* p = T;
-    node* q = NULL;
-    while(p != NULL)
-    {
-        q = p;
-        p = p->right;
-    }
-    return q;
-}
-
-node* minNode(node *T)
-{
-    node* p = T;
-    node* q = NULL;
-    while(p != NULL)
-    {
-        q = p;
-        p = p->left;
-    }
-    return q;
-}
-void preorder(node* T)
-{
-    if(T != NULL)
-    {
-        preorder(T->left);
-        N++;
-        preorder(T->right);
-    }
-}
-
-int noNodes(node* T)
-{
-    int n;
-    preorder(T);
-    n = N;
-    N = 0;
-    return n;
-}
-
 node* deleteBST(node *T, int deleteKey)
 {
     node *p = T;

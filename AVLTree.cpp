@@ -35,11 +35,30 @@ void inorder1(node* T)
 {   
     if(T != NULL)
     {   
-        updateNode(T);
         inorder1(T->left);
         cout <<"("<< T->key << ", " << T->bf<< ") ";
         inorder1(T->right);
     }
+}
+
+int inThere(node* T, int key)
+{
+    node* p = T;
+    node* q = NULL;
+    while(p != NULL) // 넣을 자리 찾고 넣음
+    {
+        if(key == p->key)
+            return 1;
+        
+        q = p;
+
+        if(key < p->key)
+            p = p->left;
+        else
+            p = p->right;
+    }
+    if(p == NULL)
+        return 0;
 }
 
 node* getAVLNode(int newkey)
@@ -129,12 +148,8 @@ node* insertBST(node* T, int newKey)
     while(p != NULL) // 넣을 자리 찾고 넣음
     {
         if(newKey == p->key)
-        {
-            cout << "i " <<newKey << " : The key already exists" <<endl;
-            inorder1(T);
-            cout <<endl;
             return T;
-        }
+        
         
         q = p;
 
@@ -173,14 +188,6 @@ node* deleteBST(node *T, int deleteKey)
             p = p->right;
     }
 
-    if(p == NULL)
-    {
-        cout << "d " << deleteKey << " : The key does not exist" << endl;
-        inorder1(T);
-        cout << endl;
-        Gq = T;
-        return T;
-    }
 
     if(p->left != NULL && p->right != NULL)
     {
@@ -284,6 +291,7 @@ void checkbalande(node* T, int Key, string &rotateType)
     {
         Gq = s.top();
         s.pop();
+        //cout << "[" << Gq->key << "]";
         updateNode(Gq);
 
         if(1 < Gq->bf || Gq->bf < -1)
@@ -298,6 +306,7 @@ void checkbalande(node* T, int Key, string &rotateType)
             }
         }
     }   
+    //cout <<endl;
 /*     if(f == NULL)
         cout  << "not exists f" << endl;
  */
@@ -381,7 +390,7 @@ void rotateTree(node* T, string rotateType, node* p, node* q)
 
             while(tmp->key != p->key) // root 부터 rotate 한 친구까지 update
             {
-                //cout << tmp->key << ", ";
+                //cout << "[" << tmp->key << "]";
                 updateNode(tmp);
                 if(tmp->key < p->key)
                     tmp = tmp->right;
@@ -392,41 +401,72 @@ void rotateTree(node* T, string rotateType, node* p, node* q)
             //cout <<endl;
         }
     }
+    updateNode(T);
 }
 
 node* insertAVL(node *T, int newKey)
 {
     string rotateType;
+    if(inThere(T, newKey) == 1)
+    {
+        cout << "i " << newKey << " : The key already exists" << endl;
+        inorder1(T);
+        cout <<endl;
+        return T;
 
-    T = insertBST(T, newKey);
+    }
+    else
+    {
+        T = insertBST(T, newKey);
 
-    checkbalande(T, newKey, rotateType);
-    cout << rotateType << " ";
+        checkbalande(T, newKey, rotateType);
+        
 
-    rotateTree(T, rotateType, Gp, Gq);
+        rotateTree(T, rotateType, Gp, Gq);
+        cout << rotateType << " ";
+
+    }
 
 
     if(Gq != NULL || rotateType == "NO")
+    {
+        inorder1(T);
+        cout << endl;
         return T;
+    }
     else
+    {
+        inorder1(Gp);
+        cout << endl;
         return Gp;
+    }
 
 }
 
 node* deleteAVL(node* T, int deleteKey)
 {
     string rotateType = "NO";
-    T = deleteBST(T, deleteKey);
-    if(Gq != NULL)
+
+    if(inThere(T, deleteKey) == 0)
     {
-        updateNode(Gq);
-        //cout <<Gq->key << ", " << Gq->bf << ", " << Gq->height <<endl;                                 //Gq가 내가 삭제한 노드의 부모노드임...
-        checkbalande(T, Gq->key, rotateType);
-        rotateTree(T, rotateType, Gp, Gq);
+        cout << "d " << deleteKey << " : The key does not exist" << endl;
+        inorder1(T);
+        cout << endl;
+        return T;
     }
+    else
+    {
+        T = deleteBST(T, deleteKey);
+        if(Gq != NULL)
+        {
+            updateNode(Gq);
+            //cout <<Gq->key << ", " << Gq->bf << ", " << Gq->height <<endl;                                 //Gq가 내가 삭제한 노드의 부모노드임...
+            checkbalande(T, Gq->key, rotateType);
+            rotateTree(T, rotateType, Gp, Gq);
+        }
 
-    cout << rotateType << " ";
-
+        cout << rotateType << " ";
+    }
 /*     inorder(T);
     cout <<endl; */
 
@@ -439,13 +479,22 @@ node* deleteAVL(node* T, int deleteKey)
     else
         cout <<"Gp == NULL" <<endl; */
 
+    
 
-    
-    if(Gq == NULL && rotateType != "NO")
+     if(Gq == NULL && rotateType != "NO")
+    {
+        inorder1(Gp);
+        cout << endl;
         return Gp;
+
+    }
     else
+    {
+        inorder1(T);
+        cout << endl;
         return T;
-    
+    }
+
 
 }
 
@@ -469,10 +518,6 @@ int main(void)
             root = deleteAVL(root, n);
         else
             break;
-
-        inorder1(root);
-        cout <<endl;
-
     }
 
 
@@ -489,8 +534,8 @@ int main(void)
         inorder(root);
         cout <<endl;
 
-    } while(root != NULL);
- */
+    } while(root != NULL); */
+
 
     return 0;
 }

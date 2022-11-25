@@ -14,6 +14,8 @@ typedef struct node
 
 }node;
 
+node* getNode
+
 bool searchPath(node* T, int m, int key, stack &s)
 {
     if(s == NULL)s = stack<node*> s;
@@ -53,7 +55,36 @@ void insertKey(node* T, int m,node* x, node* y, int newKey)
 int splitNode(node* T, int m, node* x, node* y, int newKey)
 {
     node* tempNode = x;
-    insertKey(node* T, int m, int )
+    insertKey(T, m, tempNode, y, newKey);
+
+    //int centerkey = center key of tempnode // 중앙값 찾는거임
+    int centerkey = 0;
+
+    x->n = 0;
+    i = 1;
+    while(tempNode->K[i] < centerkey)
+    {
+        x->K[i] = tempNode.k[i];
+        x.P[i-1] = tempNode.P[i-1];
+        i = i + 1;
+        x->n = x->n + 1;
+    }
+    x->P[i-1] = tempNode->P[i-1];
+
+    node* newNode = getNode();
+
+    i = i + 1;
+    while (i <= tempNode.n)
+    {
+        newNode->K[i] = tempNode.k[i];
+        newNode->P[i-1] = tempNode.p[i-1];
+        i = i + 1;
+        newNode->n = newNode->n + 1;
+
+    }
+    newNode->P[i-1] = tempNode->P[i-1];
+
+    return centerkey, newnode
 }
 
 void insertBT(node* T, int m, int newKey)
@@ -104,6 +135,26 @@ void insertBT(node* T, int m, int newKey)
         }
 
     }while(!finished);
+
+}
+
+deleteBT(node* T, int m, int oldKey)
+{
+    stack<node*> s;
+    bool found, s = searchPath(T, m, oldKey, NULL);
+
+    if(fount == false)
+        return;
+
+    x = s.top();
+    s.pop();
+
+    if(oldKey is not in terminal node)
+    {
+        node* internalNode = x;
+        i = 
+    }
+
 
 }
 

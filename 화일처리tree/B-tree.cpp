@@ -146,6 +146,7 @@ int splitNode(node* T, int m, node* x, node* y, int newKey)
 void deletekey(node* T, int m, node* x, int oldKey);
 int bestSibling(node* T, int m, node* x, node* y);
 void redistributeKeys(node* T, int m, node* x, node* y, int bestSibling);
+void mergeNode(node* T, int m, node* x, node* y, int bestSibling);
 
 
 void deleteBT(node* T, int m, int oldKey)
@@ -286,6 +287,39 @@ void redistributeKeys(node* T, int m, node* x, node* y, int bestSibling)
         deletekey(T, m, bestNode, firstKey);
         y->K[i+1] = firstKey;
     }
+
+}
+
+void mergeNode(node* T, int m, node* x, node* y, int bestSibling)
+{
+    int i = 0;
+    while(y.p[i] != x)
+        i = i + 1;
+    
+    node* bestNode = y->P[bestSibling];
+
+    if(bestSibling > i)
+    {
+        swap(bestSibling, i);
+        swap(bestNode, x);
+    }
+
+    besetNode->K[bestNode->n + 1] = y->K[i];
+    bestNode->n = bestNode->n + 1;
+
+    int j = 1;
+
+    while(j <= x->n)
+    {
+        bestNode->k[bestNode->n + 1] = x->K[j];
+        bestNode->p[bestNode->n] = x->P[j - 1];
+        bestNode->n = bestNode->n + 1;
+
+    }
+
+    bestNode->P[bestNode->n] = x->P[x.n];
+    deletekey(T, m, y, y->K[i]);
+    discard x node;
 
 }
 

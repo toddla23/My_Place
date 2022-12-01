@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
-#include <stack>
 #include <cmath>
+#include <stack>
+
 
 
 using namespace std;
@@ -16,10 +17,17 @@ typedef struct node
 }node;
 
 
-node* getNode
-bool searchPath(node* T, int m, int key, stack &s);
+node* getNode();
+bool searchPath(node* T, int m, int key, stack<node*> &s);
 void insertKey(node* T, int m,node* x, node* y, int newKey);
-int splitNode(node* T, int m, node* x, node* y, int newKey);
+node* splitNode(node* T, int m, node* x, node* y, int& newKey);
+
+node* getNode()
+{
+    node* newnode = new node;
+    newnode->K.push_back(NULL);
+    newnode->n = 0;
+}
 
 void insertBT(node* T, int m, int newKey)
 {
@@ -33,36 +41,37 @@ void insertBT(node* T, int m, int newKey)
     
     stack<node*> s;
 
-    bool found = searchPath(T, m, newKey, NULL);
+    bool found = searchPath(T, m, newKey, s);
     if(found == true)
         return;
     
     bool finished = false;
 
-    node* x = stack.top();
-    stack.pop();
-    y = null;
+    node* x = s.top();
+    s.pop();
+    node* y = NULL;
 
     do
     {
-        if(x.n < m - 1)
+        if(x->n < m - 1)
         {
             insertKey(T, m, x, y, newKey);
             finished = true;
         }
         else
         {
-            newKey, y = splitNode(T, m, x, y, newKey);
+            y = splitNode(T, m, x, y, newKey);
             if(!s.empty())
-            {    x = s.top(x);
+            {    
+                x = s.top();
                 s.pop();
             }
             else
             {
                 T = getNode();
-                T.k[1] = newKey;
-                T.p[0] = x;
-                T.p[1] = y;
+                T->K[1] = newKey;
+                T->P[0] = x;
+                T->P[1] = y;
                 finished = true;
             }
 
@@ -72,29 +81,35 @@ void insertBT(node* T, int m, int newKey)
 
 }
 
-bool searchPath(node* T, int m, int key, stack &s)
+bool searchPath(node* T, int m, int key, stack<node*> &s)
 {
-    if(s == NULL)s = stack<node*> s;
+    /* if(s.empty())
+        s = stack<node*> s; */
+        
     node* x = T;
     
+    bool pass;
     do
     {
-        int i = 1
-        while(i <= x.n && key> x->K[i])
+        int i = 1;
+        while(i <= x->n && key > x->K[i])
             i = i+1;
         
-        if(i <= x.n && key == x->K[i])
+        s.push(x);
+        if(i <= x->n && key == x->K[i-1])
             return true;
 
-        s.push(x);
-    } while ((x = x.P[i-1]) != NULL);
+        x = x->P[i-1];
+
+        pass = x != NULL;
+    }while(pass);
 
     return false;
 }
 
-void insertKey(node* T, int m,node* x, node* y, int newKey)
+void insertKey(node* T, int m, node* x, node* y, int newKey)
 {
-    int i = x.n;
+    int i = x->n;
 
     while(i >= 1 && newKey < x->K[i])
     {
@@ -103,25 +118,31 @@ void insertKey(node* T, int m,node* x, node* y, int newKey)
         i = i - 1;
     }
 
-    x.K[i] = newKey;
+    x->K[i+1] = newKey; //바꿈 다시 바뀌면 문제 있는거임
     x->P[i] = y;
-    x->n = x->n+1
+    x->n = x->n+1;
 }
 
-int splitNode(node* T, int m, node* x, node* y, int newKey)
+node* splitNode(node* T, int m, node* x, node* y, int &newKey)
 {
-    node* tempNode = x;
+    node* tempNode = new node;
+    tempNode->K = x->K;
+    tempNode->n = x->n;
+    tempNode->P = x->P;
+
     insertKey(T, m, tempNode, y, newKey);
 
-    //int centerkey = center key of tempnode // 중앙값 찾는거임
-    int centerkey = 0;
+    int tmp = (tempNode->n / 2) + 1;
+    int centerkey = tempNode->K[tmp]; // 중앙값 찾는거임
 
+    newKey = centerkey;
+    
     x->n = 0;
-    i = 1;
+    int i = 1;
     while(tempNode->K[i] < centerkey)
     {
-        x->K[i] = tempNode.k[i];
-        x.P[i-1] = tempNode.P[i-1];
+        x->K[i] = tempNode->K[i];
+        x->P[i-1] = tempNode->P[i-1];
         i = i + 1;
         x->n = x->n + 1;
     }
@@ -130,23 +151,35 @@ int splitNode(node* T, int m, node* x, node* y, int newKey)
     node* newNode = getNode();
 
     i = i + 1;
-    while (i <= tempNode.n)
+    while (i <= tempNode->n)
     {
-        newNode->K[i] = tempNode.k[i];
-        newNode->P[i-1] = tempNode.p[i-1];
+        newNode->K[newNode->n + 1] = tempNode->K[i];
+        newNode->P[newNode->n] = tempNode->P[i - 1];
         i = i + 1;
         newNode->n = newNode->n + 1;
 
     }
-    newNode->P[i-1] = tempNode->P[i-1];
+    newNode->P[newNode->n] = tempNode->P[i-1];
 
-    return centerkey, newnode
+    delete tempNode;
+
+    return newNode;
 }
 
 void deletekey(node* T, int m, node* x, int oldKey);
 int bestSibling(node* T, int m, node* x, node* y);
 void redistributeKeys(node* T, int m, node* x, node* y, int bestSibling);
 void mergeNode(node* T, int m, node* x, node* y, int bestSibling);
+
+int getheight(node* T)
+{
+    int height = 1;
+    while(T->P.size() != 0)
+    {
+        T = T->P[0];
+        height++;
+    }
+}
 
 
 void deleteBT(node* T, int m, int oldKey)
@@ -160,13 +193,15 @@ void deleteBT(node* T, int m, int oldKey)
     node* x = s.top();
     s.pop();
 
-    if(s.size() < T.height()) // old key가 단말노드에 없음
+    int i = 0;
+    if(s.size() < getheight(T)) // old key가 단말노드에 없음
     {
-        int i;
-        node* internalNode = x;
+        node* internalNode = x; 
 
-        for(int n = 0; n < T.n; n++)
-            if(T.k[n] == oldKey)
+        s.push(x);
+
+        for(int n = 0; n < T->n; n++)
+            if(T->K[n] == oldKey)
             {
                 i = n;
                 break;
@@ -176,8 +211,9 @@ void deleteBT(node* T, int m, int oldKey)
 
         x = s.top();
         s.pop();
-        node* temp = internalNode->K[i];
-        internalNode.K[i] = x->K[1];
+
+        int temp = internalNode->K[i];
+        internalNode->K[i] = x->K[1];
         x->K[1] = temp;
         
     }

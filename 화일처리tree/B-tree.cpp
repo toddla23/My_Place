@@ -3,8 +3,6 @@
 #include <cmath>
 #include <stack>
 
-
-
 using namespace std;
 
 typedef struct node
@@ -16,6 +14,7 @@ typedef struct node
 
 }node;
 
+void printTree(node* T);
 
 node* getNode();
 bool searchPath(node* T, int m, int key, stack<node*> &s);
@@ -25,44 +24,61 @@ node* splitNode(node* T, int m, node* x, node* y, int& newKey);
 node* getNode()
 {
     node* newnode = new node;
-    newnode->K.push_back(NULL);
+
+    
+
+    for(int i = 0; i < 3; i ++)
+    {
+        newnode->K.push_back(-1);
+        newnode->P.push_back(NULL);
+    }
     newnode->n = 0;
 }
 
-void insertBT(node* T, int m, int newKey)
+node* insertBT(node* T, int m, int newKey)
 {
     if(T == NULL)
     {
         T = getNode();
-        T->K.push_back(newKey);
+        T->K[1] = newKey;
         T->n = 1;
-        return;
+        return T;
     }
     
     stack<node*> s;
 
     bool found = searchPath(T, m, newKey, s);
     if(found == true)
-        return;
+        return T;
     
     bool finished = false;
 
     node* x = s.top();
     s.pop();
     node* y = NULL;
-
+    
     do
     {
         if(x->n < m - 1)
         {
+/*             cout << "insert node :" << x->K[1] << endl;
+            
+            if(T->P[1] != NULL && newKey == 403)
+            {
+                cout << "x key :" <<T->P[1]->K[1] << endl;
+                cout << "x.n :" << T->P[1]->n << endl;
+                cout << "y key :" << y->K[1] << endl;
+            } */
+
             insertKey(T, m, x, y, newKey);
             finished = true;
         }
         else
         {
             y = splitNode(T, m, x, y, newKey);
+
             if(!s.empty())
-            {    
+            {   
                 x = s.top();
                 s.pop();
             }
@@ -72,13 +88,28 @@ void insertBT(node* T, int m, int newKey)
                 T->K[1] = newKey;
                 T->P[0] = x;
                 T->P[1] = y;
+                T->n = T->n + 1;
                 finished = true;
+
             }
 
         }
+/*         if(T->P[1] != NULL && newKey == 403)
+        {
+            cout << "x key :" <<T->P[1]->K[1] << endl;
+            cout << "x.n :" << T->P[1]->n << endl;
+            cout << "y key :" << y->K[1] << endl;
+        } */
 
     }while(!finished);
 
+/*     if(T->P[1] != NULL && newKey == 403)
+    {
+        cout << "x key :" <<T->P[1]->K[1] << endl;
+        cout << "y key :" << y->K[1] << endl;
+    } */
+
+    return T;
 }
 
 bool searchPath(node* T, int m, int key, stack<node*> &s)
@@ -94,9 +125,9 @@ bool searchPath(node* T, int m, int key, stack<node*> &s)
         int i = 1;
         while(i <= x->n && key > x->K[i])
             i = i+1;
-        
+
         s.push(x);
-        if(i <= x->n && key == x->K[i-1])
+        if(i <= x->n && key == x->K[i])
             return true;
 
         x = x->P[i-1];
@@ -118,8 +149,8 @@ void insertKey(node* T, int m, node* x, node* y, int newKey)
         i = i - 1;
     }
 
-    x->K[i+1] = newKey; //바꿈 다시 바뀌면 문제 있는거임
-    x->P[i] = y;
+    x->K[i + 1] = newKey; //바꿈 다시 바뀌면 문제 있는거임
+    x->P[i + 1] = y;        // 여기도 바꿈 다시바뀌면 문제있는거
     x->n = x->n+1;
 }
 
@@ -132,6 +163,11 @@ node* splitNode(node* T, int m, node* x, node* y, int &newKey)
 
     insertKey(T, m, tempNode, y, newKey);
 
+    for(int i = 1; i <= tempNode->n; i ++)
+    {
+        cout << "{" << tempNode->K[i] << "}";
+    }
+    cout << endl;
     int tmp = (tempNode->n / 2) + 1;
     int centerkey = tempNode->K[tmp]; // 중앙값 찾는거임
 
@@ -166,46 +202,45 @@ node* splitNode(node* T, int m, node* x, node* y, int &newKey)
     return newNode;
 }
 
-void deletekey(node* T, int m, node* x, int oldKey);
+void deleteKey(node* T, int m, node* x, int oldKey);
 int bestSibling(node* T, int m, node* x, node* y);
 void redistributeKeys(node* T, int m, node* x, node* y, int bestSibling);
 void mergeNode(node* T, int m, node* x, node* y, int bestSibling);
+bool isRoot(node* T);
 
 int getheight(node* T)
 {
+    
     int height = 1;
-    while(T->P.size() != 0)
+    while(T->P[0] != NULL)
     {
         T = T->P[0];
         height++;
     }
+    return height;
 }
 
 
-void deleteBT(node* T, int m, int oldKey)
+node* deleteBT(node* T, int m, int oldKey)
 {
     stack<node*> s;
     bool found = searchPath(T, m, oldKey, s);
 
     if(found == false)
-        return;
+        return T;
 
     node* x = s.top();
     s.pop();
 
-    int i = 0;
-    if(s.size() < getheight(T)) // old key가 단말노드에 없음
+    int i = 1;
+    
+    cout <<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
+    if(s.size() + 1 < getheight(T)) // old key를 내부노드에서 발견
     {
+
         node* internalNode = x; 
 
         s.push(x);
-
-        for(int n = 0; n < T->n; n++)
-            if(T->K[n] == oldKey)
-            {
-                i = n;
-                break;
-            }
 
         bool found2 = searchPath(x->P[i], m, x->K[i], s);
 
@@ -217,6 +252,14 @@ void deleteBT(node* T, int m, int oldKey)
         x->K[1] = temp;
         
     }
+    else
+    {
+
+    }
+            cout <<"==================================" << endl;
+
+
+
     bool finished = false;
     deleteKey(T, m, x, oldKey);
     node* y;
@@ -229,21 +272,21 @@ void deleteBT(node* T, int m, int oldKey)
 
     do
     {
-        if(isRoot(x) || x->n >= round(m / 2) - 1)
+        if(x == T || x->n >= round(m / 2) - 1)
             finished = true;
         else
         {
-            int bestSibling = bestSibling(T, m, x, y);
+            int bestsibling = bestSibling(T, m, x, y);
 
-            if(y.P[bestSibling].n > round(m/2) - 1)
+            if(y->P[bestsibling]->n > round(m/2) - 1)
             {
-                redistributeKeys(T, m, x, y, bestSibling);
+                redistributeKeys(T, m, x, y, bestsibling);
                 finished = true;
 
             }
             else
             {
-                mergeNode(T, m, x, y, bestSibling);
+                mergeNode(T, m, x, y, bestsibling);
                 x = y;
                 if(!s.empty())
                 {
@@ -261,20 +304,24 @@ void deleteBT(node* T, int m, int oldKey)
     if(y->n == 0)
     {
         T = y->P[0];
-        discard y node;
+        delete x;
     }
+    
+    cout << "root`s key = " << T->K[1] << endl;
+    cout << "root`s child key :" << T->P[0]->K[1] << endl;
 
+    return T;
 }
 
-void deletekey(node* T, int m, node* x, int oldKey)
+void deleteKey(node* T, int m, node* x, int oldKey)
 {
-    i = 1;
+    int i = 1;
     while(oldKey > x->K[i])
         i = i + 1;
     
-    while (i <= x.n)
+    while (i <= x->n)
     {
-        x.K[i] = x->K[i+1];
+        x->K[i] = x->K[i+1];
         x->P[i] = x->P[i+1];
         i = i + 1;
     }
@@ -282,28 +329,31 @@ void deletekey(node* T, int m, node* x, int oldKey)
 
 }
 
-int bestSibling(node* T, int m, node* x, node* y);
+int bestSibling(node* T, int m, node* x, node* y)
 {
     int i = 0;
+
     while(y->P[i] != x)
         i = i + 1;
-    int bestSibling;
+    int bestsibling;
 
-    if(i = 0)
-        bestSibling = i + 1;
+    if(i == 0)
+        bestsibling = i + 1;
     else if(i == y->n)
-        bestSibling = i - 1;
-    else if(y->P[i-1].n >= y.P[i+1].n)
-        bestSibling = i - 1;
+        bestsibling = i - 1;
+    else if(y->P[i-1]->n >= y->P[i+1]->n)
+        bestsibling = i - 1;
     else
-        bestSibling = i + 1
+        bestsibling = i + 1;
 
-    return bestSibling;
+    return bestsibling;
 }
+
 
 void redistributeKeys(node* T, int m, node* x, node* y, int bestSibling)
 {
     int i = 0;
+
     while(y->P[i] != x)
         i = i + 1;
     
@@ -311,52 +361,85 @@ void redistributeKeys(node* T, int m, node* x, node* y, int bestSibling)
 
     if(bestSibling < i)
     {
-        int lastKey = bestNode.K[bestNode.n];
-        insertKey(T, m, null, y->K[i]);
-        deletekey(T, m, bestNode, lastKey);
+        int lastKey = bestNode->K[bestNode->n];
+        insertKey(T, m, x, NULL, y->K[i]);
+        x->P[1] = x->P[0];
+        x->P[0] = bestNode->P[bestNode->n];
+        bestNode->P[bestNode->n] = NULL;
+
+        deleteKey(T, m, bestNode, lastKey);
         y->K[i] = lastKey;
     }
     else
     {
         int firstKey = bestNode->K[1];
-        insertKey(T, m, x, null, y->K[i+1]);
-        deletekey(T, m, bestNode, firstKey);
+        insertKey(T, m, x, NULL, y->K[i+1]);
+        deleteKey(T, m, bestNode, firstKey);
         y->K[i+1] = firstKey;
     }
 
 }
 
-void mergeNode(node* T, int m, node* x, node* y, int bestSibling)
+void mergeNode(node* T, int m, node* x, node* y, int bestsibling)
 {
     int i = 0;
-    while(y.p[i] != x)
+    while(y->P[i] != x)
         i = i + 1;
     
-    node* bestNode = y->P[bestSibling];
+    node* bestNode = y->P[bestsibling];
 
-    if(bestSibling > i)
+    if(bestsibling > i)
     {
-        swap(bestSibling, i);
+        swap(bestsibling, i);
         swap(bestNode, x);
     }
 
-    besetNode->K[bestNode->n + 1] = y->K[i];
+    bestNode->K[bestNode->n + 1] = y->K[i];
     bestNode->n = bestNode->n + 1;
 
     int j = 1;
 
     while(j <= x->n)
     {
-        bestNode->k[bestNode->n + 1] = x->K[j];
-        bestNode->p[bestNode->n] = x->P[j - 1];
+        bestNode->K[bestNode->n + 1] = x->K[j];
+        bestNode->P[bestNode->n] = x->P[j - 1];
         bestNode->n = bestNode->n + 1;
+
+        j = j + 1;
 
     }
 
-    bestNode->P[bestNode->n] = x->P[x.n];
-    deletekey(T, m, y, y->K[i]);
-    discard x node;
+    bestNode->P[bestNode->n] = x->P[x->n];
+    deleteKey(T, m, y, y->K[i]);
+    delete x;
 
+}
+
+
+
+
+int asd = 0;
+void printTree(node* T)
+{
+    if(T == NULL)
+        return;
+/*     cout << "asd : " << asd << endl;
+
+    cout << "T.n : " << T->n << endl;
+        
+    cout << "(" << T->K[1] << ")" << endl; */
+
+    int i = 0;
+    printTree(T->P[i]);
+    for(i = 1; i < T->n + 1; i++)
+    {
+        cout << "[" << T->K[i] << "] ";
+        printTree(T->P[i]);
+    }
+
+    
+    
+    asd++;
 }
 
 
@@ -364,11 +447,44 @@ void mergeNode(node* T, int m, node* x, node* y, int bestSibling)
 
 int main(void)
 {
-    node* root = new node;
+    node* root = NULL;
+    
+    char com;
+    int k;
 
-    root->K.push_back(1);
+    while(com != 'q')
+    {
+        cin >> com >> k;
+        if(com == 'i')
+        {
+            root = insertBT(root, 3, k);
+            printTree(root);
+            cout << endl;
+            cout << endl;
+            asd = 0;
+        }
+        if(k == 403)
+        {
+            
+            cout << "root`s key = " << root->K[1] << ", " << root->K[2] << endl;
+            for(int i = 0; i <root->n+1; i++)
+            {
+                if(root->P[i] != NULL)
+                    cout << "root`s child key :" << root->P[i]->K[1] << endl;
+            }
 
-    cout << root->K[0];
+        }
+        else if(com == 'd')
+        {
+            root = deleteBT(root, 3, k);
+            printTree(root);
+            cout << endl;
+            cout << endl;
+            asd = 0;
+        }
+
+    }
+    
 
 
 }

@@ -163,10 +163,6 @@ node* splitNode(node* T, int m, node* x, node* y, int &newKey)
 
     insertKey(T, m, tempNode, y, newKey);
 
-    for(int i = 1; i <= tempNode->n; i ++)
-    {
-        cout << "{" << tempNode->K[i] << "}";
-    }
     cout << endl;
     int tmp = (tempNode->n / 2) + 1;
     int centerkey = tempNode->K[tmp]; // 중앙값 찾는거임
@@ -232,16 +228,20 @@ node* deleteBT(node* T, int m, int oldKey)
     node* x = s.top();
     s.pop();
 
-    int i = 1;
     
-    cout <<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
+    
     if(s.size() + 1 < getheight(T)) // old key를 내부노드에서 발견
     {
-
+        cout << "AAAAAAAAAAAAAAAAAAAAA" << endl;
         node* internalNode = x; 
 
         s.push(x);
-
+        int i = 0;
+        for(i = 1; i < x->n; i ++)
+        {
+            if(x->K[i] == oldKey)
+                break;
+        }
         bool found2 = searchPath(x->P[i], m, x->K[i], s);
 
         x = s.top();
@@ -252,13 +252,6 @@ node* deleteBT(node* T, int m, int oldKey)
         x->K[1] = temp;
         
     }
-    else
-    {
-
-    }
-            cout <<"==================================" << endl;
-
-
 
     bool finished = false;
     deleteKey(T, m, x, oldKey);
@@ -270,6 +263,11 @@ node* deleteBT(node* T, int m, int oldKey)
         s.pop();
     }
 
+    if(x != NULL && y != NULL)
+    {
+        cout << "x key: " << x->K[1] << endl;
+        cout << "y key: " << y->K[1] << endl;
+    }
     do
     {
         if(x == T || x->n >= round(m / 2) - 1)
@@ -277,7 +275,6 @@ node* deleteBT(node* T, int m, int oldKey)
         else
         {
             int bestsibling = bestSibling(T, m, x, y);
-
             if(y->P[bestsibling]->n > round(m/2) - 1)
             {
                 redistributeKeys(T, m, x, y, bestsibling);
@@ -301,14 +298,11 @@ node* deleteBT(node* T, int m, int oldKey)
 
     }while(!finished);
 
-    if(y->n == 0)
+    if(y != NULL && y->n == 0)
     {
         T = y->P[0];
         delete x;
     }
-    
-    cout << "root`s key = " << T->K[1] << endl;
-    cout << "root`s child key :" << T->P[0]->K[1] << endl;
 
     return T;
 }
@@ -433,7 +427,14 @@ void printTree(node* T)
     printTree(T->P[i]);
     for(i = 1; i < T->n + 1; i++)
     {
-        cout << "[" << T->K[i] << "] ";
+        for(int j = 1; j < T->n + 1; j++)
+        {
+            cout << "[" << T->K[j] << "] ";
+        }
+        cout <<endl;
+
+       // cout << "[" << T->K[i] << "] ";
+
         printTree(T->P[i]);
     }
 
@@ -460,31 +461,17 @@ int main(void)
             root = insertBT(root, 3, k);
             printTree(root);
             cout << endl;
-            cout << endl;
-            asd = 0;
         }
-        if(k == 403)
-        {
             
-            cout << "root`s key = " << root->K[1] << ", " << root->K[2] << endl;
-            for(int i = 0; i <root->n+1; i++)
-            {
-                if(root->P[i] != NULL)
-                    cout << "root`s child key :" << root->P[i]->K[1] << endl;
-            }
 
-        }
         else if(com == 'd')
         {
             root = deleteBT(root, 3, k);
             printTree(root);
             cout << endl;
             cout << endl;
-            asd = 0;
         }
-
+        asd = 0;
     }
     
-
-
 }

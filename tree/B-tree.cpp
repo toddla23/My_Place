@@ -2,6 +2,9 @@
 #include <vector>
 #include <cmath>
 #include <stack>
+#include <fstream>
+#include <string>
+
 
 using namespace std;
 
@@ -27,7 +30,7 @@ node* getNode()
 
     
 
-    for(int i = 0; i < 3; i ++)
+    for(int i = 0; i < 4; i ++)
     {
         newnode->K.push_back(-1);
         newnode->P.push_back(NULL);
@@ -48,6 +51,7 @@ node* insertBT(node* T, int m, int newKey)
     stack<node*> s;
 
     bool found = searchPath(T, m, newKey, s);
+
     if(found == true)
         return T;
     
@@ -102,12 +106,7 @@ node* insertBT(node* T, int m, int newKey)
         } */
 
     }while(!finished);
-
-/*     if(T->P[1] != NULL && newKey == 403)
-    {
-        cout << "x key :" <<T->P[1]->K[1] << endl;
-        cout << "y key :" << y->K[1] << endl;
-    } */
+    
 
     return T;
 }
@@ -158,12 +157,13 @@ node* splitNode(node* T, int m, node* x, node* y, int &newKey)
 {
     node* tempNode = new node;
     tempNode->K = x->K;
+    tempNode->K.push_back(-1);
     tempNode->n = x->n;
     tempNode->P = x->P;
+    tempNode->P.push_back(NULL);
 
     insertKey(T, m, tempNode, y, newKey);
 
-    cout << endl;
     int tmp = (tempNode->n / 2) + 1;
     int centerkey = tempNode->K[tmp]; // 중앙값 찾는거임
 
@@ -191,6 +191,7 @@ node* splitNode(node* T, int m, node* x, node* y, int &newKey)
         newNode->n = newNode->n + 1;
 
     }
+
     newNode->P[newNode->n] = tempNode->P[i-1];
 
     delete tempNode;
@@ -229,10 +230,8 @@ node* deleteBT(node* T, int m, int oldKey)
     s.pop();
 
     
-    
-    if(s.size() + 1 < getheight(T)) // old key를 내부노드에서 발견
+    if(s.size() != getheight(T)) // old key를 내부노드에서 발견
     {
-        cout << "AAAAAAAAAAAAAAAAAAAAA" << endl;
         node* internalNode = x; 
 
         s.push(x);
@@ -250,7 +249,12 @@ node* deleteBT(node* T, int m, int oldKey)
         int temp = internalNode->K[i];
         internalNode->K[i] = x->K[1];
         x->K[1] = temp;
-        
+
+        for(int j = 1; j < internalNode->n+1; j++)
+        {
+            cout <<"{" << internalNode->K[j] << "}";
+        }
+        cout <<endl;
     }
 
     bool finished = false;
@@ -263,11 +267,6 @@ node* deleteBT(node* T, int m, int oldKey)
         s.pop();
     }
 
-    if(x != NULL && y != NULL)
-    {
-        cout << "x key: " << x->K[1] << endl;
-        cout << "y key: " << y->K[1] << endl;
-    }
     do
     {
         if(x == T || x->n >= round(m / 2) - 1)
@@ -319,7 +318,7 @@ void deleteKey(node* T, int m, node* x, int oldKey)
         x->P[i] = x->P[i+1];
         i = i + 1;
     }
-    x->n = x->n -1;
+    x->n = x->n - 1;
 
 }
 
@@ -382,10 +381,17 @@ void mergeNode(node* T, int m, node* x, node* y, int bestsibling)
     
     node* bestNode = y->P[bestsibling];
 
+
     if(bestsibling > i)
     {
-        swap(bestsibling, i);
-        swap(bestNode, x);
+
+        node* tmpnode = x;
+        x = bestNode;
+        bestNode = tmpnode;
+
+        int tmp = i;
+        i = bestsibling;
+        bestsibling = tmp;
     }
 
     bestNode->K[bestNode->n + 1] = y->K[i];
@@ -411,36 +417,28 @@ void mergeNode(node* T, int m, node* x, node* y, int bestsibling)
 
 
 
-
 int asd = 0;
 void printTree(node* T)
 {
-    if(T == NULL)
-        return;
-/*     cout << "asd : " << asd << endl;
 
-    cout << "T.n : " << T->n << endl;
-        
-    cout << "(" << T->K[1] << ")" << endl; */
-
-    int i = 0;
-    printTree(T->P[i]);
-    for(i = 1; i < T->n + 1; i++)
+    if(T != NULL)
     {
-        for(int j = 1; j < T->n + 1; j++)
-        {
-            cout << "[" << T->K[j] << "] ";
-        }
-        cout <<endl;
-
-       // cout << "[" << T->K[i] << "] ";
-
+        int i = 0;
         printTree(T->P[i]);
-    }
+        for(i = 1; i < T->n + 1; i++)
+        {
+/*             for(int j = 1; j < T->n + 1; j++)
+            {
+                cout << "[" << T->K[j] << "] ";
+            }
+            cout <<endl; */
 
-    
-    
-    asd++;
+            cout << "[" <<T->K[i]  << "]";
+
+            printTree(T->P[i]);
+        }
+
+    }
 }
 
 
@@ -448,30 +446,56 @@ void printTree(node* T)
 
 int main(void)
 {
-    node* root = NULL;
     
-    char com;
+    fstream fs; // 여기에 파일 경로 넣어주세요
+
+    fs.open("BT-input.txt", ios::in);
+
+    node* root = NULL;
+    string com;
+    string buf;
     int k;
 
-    while(com != 'q')
+/*     while(!fs.eof())
+    {        
+        getline(fs, com, ' ');
+        getline(fs, buf);
+        k = stoi(buf);
+
+        if(com == "i")
+        {
+            root = insertBT(root, 4, k);
+            printTree(root);
+            cout << endl;
+        }
+        else if(com == "d")
+        {
+            root = deleteBT(root, 4, k);
+            printTree(root);
+            cout << endl;
+        }
+        
+    } */
+
+
+    while(com != "q")
     {
         cin >> com >> k;
-        if(com == 'i')
+        if(com == "i")
         {
-            root = insertBT(root, 3, k);
+            root = insertBT(root, 4, k);
             printTree(root);
             cout << endl;
         }
-            
-
-        else if(com == 'd')
+        else if(com == "d")
         {
-            root = deleteBT(root, 3, k);
+            root = deleteBT(root, 4, k);
             printTree(root);
             cout << endl;
-            cout << endl;
         }
-        asd = 0;
     }
+
+
     
+
 }

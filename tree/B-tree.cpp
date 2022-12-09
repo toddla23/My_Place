@@ -53,7 +53,10 @@ node* insertBT(node* T, int m, int newKey)
     bool found = searchPath(T, m, newKey, s);
 
     if(found == true)
+    {
+        cout << "i " << newKey << " : The key already exists " <<endl;
         return T;
+    }
     
     bool finished = false;
 
@@ -224,7 +227,11 @@ node* deleteBT(node* T, int m, int oldKey)
     bool found = searchPath(T, m, oldKey, s);
 
     if(found == false)
+    {
+        cout << "d " << oldKey << " : The key does not exists " <<endl;
         return T;
+    }
+    
 
     node* x = s.top();
     s.pop();
@@ -249,12 +256,6 @@ node* deleteBT(node* T, int m, int oldKey)
         int temp = internalNode->K[i];
         internalNode->K[i] = x->K[1];
         x->K[1] = temp;
-
-        for(int j = 1; j < internalNode->n+1; j++)
-        {
-            cout <<"{" << internalNode->K[j] << "}";
-        }
-        cout <<endl;
     }
 
     bool finished = false;
@@ -433,7 +434,7 @@ void printTree(node* T)
             }
             cout <<endl; */
 
-            cout << "[" <<T->K[i]  << "]";
+            cout <<T->K[i]  << " ";
 
             printTree(T->P[i]);
         }
@@ -456,7 +457,7 @@ int main(void)
     string buf;
     int k;
 
-/*     while(!fs.eof())
+    while(!fs.eof())
     {        
         getline(fs, com, ' ');
         getline(fs, buf);
@@ -464,21 +465,47 @@ int main(void)
 
         if(com == "i")
         {
-            root = insertBT(root, 4, k);
+            root = insertBT(root, 3, k);
             printTree(root);
             cout << endl;
         }
         else if(com == "d")
         {
-            root = deleteBT(root, 4, k);
+            root = deleteBT(root, 3, k);
             printTree(root);
             cout << endl;
         }
         
-    } */
+    }
 
+    cout <<endl;
 
-    while(com != "q")
+    fstream fs1;
+    fs1.open("BT-input.txt", ios::in);
+    node* root1 = NULL;
+
+    while(!fs1.eof())
+    {        
+        getline(fs1, com, ' ');
+        getline(fs1, buf);
+        k = stoi(buf);
+
+        if(com == "i")
+        {
+            root1 = insertBT(root1, 4, k);
+            printTree(root1);
+            cout << endl;
+        }
+        else if(com == "d")
+        {
+            root1 = deleteBT(root1, 4, k);
+            printTree(root1);
+            cout << endl;
+        }
+        
+    }
+    
+/*     while(com != "q")
     {
         cin >> com >> k;
         if(com == "i")
@@ -493,9 +520,6 @@ int main(void)
             printTree(root);
             cout << endl;
         }
-    }
-
-
-    
+    } */
 
 }
